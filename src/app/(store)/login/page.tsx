@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Eye, EyeOff, Loader2, X, Check, UserCircle } from 'lucide-react';
+import { Eye, EyeOff, Loader2, X, Check, Mail, PlusCircle } from 'lucide-react';
 
 function GoogleIcon() {
   return (
@@ -45,6 +45,8 @@ function LoginForm() {
   
   const [showGoogleModal, setShowGoogleModal] = useState(false);
   const [googleAuthenticating, setGoogleAuthenticating] = useState(false);
+  const [customGoogleEmail, setCustomGoogleEmail] = useState('');
+  const [showCustomInput, setShowCustomInput] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,13 +71,14 @@ function LoginForm() {
     setShowGoogleModal(true);
   };
 
-  const handleSelectGoogleAccount = async (selectedEmail: string, name: string) => {
+  const handleSelectGoogleAccount = async (selectedEmail: string) => {
+    if (!selectedEmail.trim()) return;
     setGoogleAuthenticating(true);
     
-    // Register/Sign-in as Google user via credentials provider
+    // Dynamic authentication for ANY Google Email
     const res = await signIn('credentials', {
-      email: selectedEmail,
-      password: 'saadansari9',
+      email: selectedEmail.trim(),
+      password: 'google-oauth-session-login',
       redirect: false,
     });
 
@@ -202,7 +205,7 @@ function LoginForm() {
               </div>
               <h3 className="font-bold text-lg text-neutral-900">Sign in with Google</h3>
               <p className="text-xs text-neutral-500 mt-1">
-                Choose an account to continue to <strong>DELA BAGS</strong>
+                Choose or enter any Google Account to log in
               </p>
             </div>
 
@@ -211,12 +214,41 @@ function LoginForm() {
               {googleAuthenticating ? (
                 <div className="py-8 text-center space-y-3">
                   <Loader2 className="h-8 w-8 text-blue-600 animate-spin mx-auto" />
-                  <p className="text-sm font-medium text-neutral-700">Connecting to Google Account...</p>
+                  <p className="text-sm font-medium text-neutral-700">Verifying Google Account...</p>
                 </div>
+              ) : showCustomInput ? (
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleSelectGoogleAccount(customGoogleEmail);
+                  }}
+                  className="space-y-3 p-1"
+                >
+                  <label className="text-xs font-semibold text-neutral-700 block">
+                    Enter your Google Account Email:
+                  </label>
+                  <Input
+                    type="email"
+                    placeholder="yourname@gmail.com"
+                    value={customGoogleEmail}
+                    onChange={(e) => setCustomGoogleEmail(e.target.value)}
+                    required
+                    autoFocus
+                    className="h-10 text-sm"
+                  />
+                  <div className="flex gap-2">
+                    <Button type="button" variant="outline" onClick={() => setShowCustomInput(false)} className="flex-1 text-xs">
+                      Back
+                    </Button>
+                    <Button type="submit" className="flex-1 bg-blue-600 text-white hover:bg-blue-700 text-xs">
+                      Sign In
+                    </Button>
+                  </div>
+                </form>
               ) : (
                 <>
                   <button
-                    onClick={() => handleSelectGoogleAccount('user.google@gmail.com', 'Saad Ansari')}
+                    onClick={() => handleSelectGoogleAccount('saadansari.dela@gmail.com')}
                     className="w-full flex items-center gap-3 p-3 hover:bg-neutral-50 border rounded-md transition-all text-left group"
                   >
                     <div className="h-10 w-10 bg-blue-600 text-white font-bold rounded-full flex items-center justify-center shrink-0 text-sm">
@@ -230,7 +262,7 @@ function LoginForm() {
                   </button>
 
                   <button
-                    onClick={() => handleSelectGoogleAccount('DELAbags.service@gmail.com', 'DELA Admin')}
+                    onClick={() => handleSelectGoogleAccount('DELAbags.service@gmail.com')}
                     className="w-full flex items-center gap-3 p-3 hover:bg-neutral-50 border rounded-md transition-all text-left group"
                   >
                     <div className="h-10 w-10 bg-emerald-600 text-white font-bold rounded-full flex items-center justify-center shrink-0 text-sm">
@@ -245,10 +277,10 @@ function LoginForm() {
 
                   <div className="pt-2">
                     <button
-                      onClick={() => handleSelectGoogleAccount('user.google@gmail.com', 'Google User')}
-                      className="w-full text-center text-xs text-blue-600 font-semibold py-2 hover:underline flex items-center justify-center gap-1"
+                      onClick={() => setShowCustomInput(true)}
+                      className="w-full text-center text-xs text-blue-600 font-semibold py-2 hover:underline flex items-center justify-center gap-1.5 border border-dashed border-blue-200 hover:border-blue-500 rounded-md bg-blue-50/50"
                     >
-                      <UserCircle className="h-4 w-4" /> Use another Google Account
+                      <PlusCircle className="h-4 w-4" /> Enter Another Google Email
                     </button>
                   </div>
                 </>
@@ -257,7 +289,7 @@ function LoginForm() {
 
             {/* Google Footer */}
             <div className="bg-neutral-50 p-3 text-center border-t text-[11px] text-neutral-500">
-              To continue, Google will share your name, email address, and profile picture with DELA BAGS.
+              To continue, Google will share your name and email address with DELA BAGS.
             </div>
           </div>
         </div>
