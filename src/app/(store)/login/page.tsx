@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Eye, EyeOff, Loader2, X, Check, Mail, PlusCircle } from 'lucide-react';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
 
 function GoogleIcon() {
   return (
@@ -42,11 +42,7 @@ function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  
-  const [showGoogleModal, setShowGoogleModal] = useState(false);
-  const [googleAuthenticating, setGoogleAuthenticating] = useState(false);
-  const [customGoogleEmail, setCustomGoogleEmail] = useState('');
-  const [showCustomInput, setShowCustomInput] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,235 +62,115 @@ function LoginForm() {
     }
   };
 
-  const handleOpenGoogleModal = () => {
+  const handleNativeGoogleSignIn = () => {
+    setGoogleLoading(true);
     setError('');
-    setShowGoogleModal(true);
-  };
-
-  const handleSelectGoogleAccount = async (selectedEmail: string) => {
-    if (!selectedEmail.trim()) return;
-    setGoogleAuthenticating(true);
-    
-    // Dynamic authentication for ANY Google Email
-    const res = await signIn('credentials', {
-      email: selectedEmail.trim(),
-      password: 'google-oauth-session-login',
-      redirect: false,
-    });
-
-    setGoogleAuthenticating(false);
-    setShowGoogleModal(false);
-
-    if (res?.error) {
-      setError('Failed to authenticate with Google Account.');
-    } else {
-      router.push(callbackUrl);
-      router.refresh();
-    }
+    // Triggers native browser redirect to accounts.google.com
+    signIn('google', { callbackUrl });
   };
 
   return (
-    <>
-      <div className="w-full max-w-md bg-white p-8 shadow-sm border">
-        <div className="text-center mb-8">
-          <h1 className="font-heading text-3xl font-bold">Welcome Back</h1>
-          <p className="text-muted-foreground mt-2">Sign in to your DELA BAGS account</p>
-        </div>
+    <div className="w-full max-w-md bg-white p-8 shadow-sm border">
+      <div className="text-center mb-8">
+        <h1 className="font-heading text-3xl font-bold">Welcome Back</h1>
+        <p className="text-muted-foreground mt-2">Sign in to your DELA BAGS account</p>
+      </div>
 
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6 text-sm">
-            {error}
-          </div>
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6 text-sm">
+          {error}
+        </div>
+      )}
+
+      {/* Official Google OAuth Trigger Button */}
+      <Button
+        type="button"
+        variant="outline"
+        onClick={handleNativeGoogleSignIn}
+        disabled={googleLoading}
+        className="w-full border-neutral-300 hover:bg-neutral-50 h-12 text-sm font-semibold flex items-center justify-center rounded-none mb-6 transition-all"
+      >
+        {googleLoading ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Opening Google...
+          </>
+        ) : (
+          <>
+            <GoogleIcon /> Continue with Google
+          </>
         )}
+      </Button>
 
-        {/* Working Google Login Button */}
-        <Button
-          type="button"
-          variant="outline"
-          onClick={handleOpenGoogleModal}
-          className="w-full border-neutral-300 hover:bg-neutral-50 h-12 text-sm font-semibold flex items-center justify-center rounded-none mb-6 transition-all"
-        >
-          <GoogleIcon /> Continue with Google
-        </Button>
-
-        <div className="relative mb-6">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-neutral-200" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-white px-3 text-muted-foreground font-medium">Or sign in with email</span>
-          </div>
+      <div className="relative mb-6">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-neutral-200" />
         </div>
-
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div className="space-y-2">
-            <Label htmlFor="email">Email address</Label>
-            <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-              required
-              autoComplete="email"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <div className="flex justify-between items-center">
-              <Label htmlFor="password">Password</Label>
-              <Link href="/forgot-password" className="text-xs text-muted-foreground hover:text-black underline underline-offset-2">
-                Forgot password?
-              </Link>
-            </div>
-            <div className="relative">
-              <Input
-                id="password"
-                type={showPassword ? 'text' : 'password'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-                autoComplete="current-password"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-black"
-              >
-                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </button>
-            </div>
-          </div>
-
-          <Button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-black text-white hover:bg-neutral-800 rounded-none h-12 text-base font-bold"
-          >
-            {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Signing in...</> : 'SIGN IN'}
-          </Button>
-        </form>
-
-        <p className="mt-6 text-center text-sm text-muted-foreground">
-          Don&apos;t have an account?{' '}
-          <Link href="/register" className="font-medium text-black underline underline-offset-4">
-            Create one
-          </Link>
-        </p>
-
-        <div className="mt-6 p-3 bg-neutral-50 border text-xs text-muted-foreground">
-          <strong>Admin Login:</strong> DELAbags.service@gmail.com / saadansari9
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-white px-3 text-muted-foreground font-medium">Or sign in with email</span>
         </div>
       </div>
 
-      {/* Google Account Selection Modal */}
-      {showGoogleModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-sm rounded-lg shadow-2xl overflow-hidden border animate-in fade-in zoom-in duration-200">
-            {/* Google Modal Header */}
-            <div className="p-6 text-center border-b relative">
-              <button
-                onClick={() => setShowGoogleModal(false)}
-                className="absolute right-4 top-4 text-neutral-400 hover:text-black"
-              >
-                <X className="h-5 w-5" />
-              </button>
-              <div className="flex justify-center mb-3">
-                <GoogleIcon />
-              </div>
-              <h3 className="font-bold text-lg text-neutral-900">Sign in with Google</h3>
-              <p className="text-xs text-neutral-500 mt-1">
-                Choose or enter any Google Account to log in
-              </p>
-            </div>
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <div className="space-y-2">
+          <Label htmlFor="email">Email address</Label>
+          <Input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@example.com"
+            required
+            autoComplete="email"
+          />
+        </div>
 
-            {/* Account Options List */}
-            <div className="p-4 space-y-2">
-              {googleAuthenticating ? (
-                <div className="py-8 text-center space-y-3">
-                  <Loader2 className="h-8 w-8 text-blue-600 animate-spin mx-auto" />
-                  <p className="text-sm font-medium text-neutral-700">Verifying Google Account...</p>
-                </div>
-              ) : showCustomInput ? (
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    handleSelectGoogleAccount(customGoogleEmail);
-                  }}
-                  className="space-y-3 p-1"
-                >
-                  <label className="text-xs font-semibold text-neutral-700 block">
-                    Enter your Google Account Email:
-                  </label>
-                  <Input
-                    type="email"
-                    placeholder="yourname@gmail.com"
-                    value={customGoogleEmail}
-                    onChange={(e) => setCustomGoogleEmail(e.target.value)}
-                    required
-                    autoFocus
-                    className="h-10 text-sm"
-                  />
-                  <div className="flex gap-2">
-                    <Button type="button" variant="outline" onClick={() => setShowCustomInput(false)} className="flex-1 text-xs">
-                      Back
-                    </Button>
-                    <Button type="submit" className="flex-1 bg-blue-600 text-white hover:bg-blue-700 text-xs">
-                      Sign In
-                    </Button>
-                  </div>
-                </form>
-              ) : (
-                <>
-                  <button
-                    onClick={() => handleSelectGoogleAccount('saadansari.dela@gmail.com')}
-                    className="w-full flex items-center gap-3 p-3 hover:bg-neutral-50 border rounded-md transition-all text-left group"
-                  >
-                    <div className="h-10 w-10 bg-blue-600 text-white font-bold rounded-full flex items-center justify-center shrink-0 text-sm">
-                      SA
-                    </div>
-                    <div className="flex-1 overflow-hidden">
-                      <p className="font-bold text-sm text-neutral-900 group-hover:text-blue-600">Saad Ansari</p>
-                      <p className="text-xs text-neutral-500 truncate">saadansari.dela@gmail.com</p>
-                    </div>
-                    <Check className="h-4 w-4 text-blue-600 opacity-0 group-hover:opacity-100" />
-                  </button>
-
-                  <button
-                    onClick={() => handleSelectGoogleAccount('DELAbags.service@gmail.com')}
-                    className="w-full flex items-center gap-3 p-3 hover:bg-neutral-50 border rounded-md transition-all text-left group"
-                  >
-                    <div className="h-10 w-10 bg-emerald-600 text-white font-bold rounded-full flex items-center justify-center shrink-0 text-sm">
-                      DA
-                    </div>
-                    <div className="flex-1 overflow-hidden">
-                      <p className="font-bold text-sm text-neutral-900 group-hover:text-emerald-600">DELA Admin</p>
-                      <p className="text-xs text-neutral-500 truncate">DELAbags.service@gmail.com</p>
-                    </div>
-                    <Check className="h-4 w-4 text-emerald-600 opacity-0 group-hover:opacity-100" />
-                  </button>
-
-                  <div className="pt-2">
-                    <button
-                      onClick={() => setShowCustomInput(true)}
-                      className="w-full text-center text-xs text-blue-600 font-semibold py-2 hover:underline flex items-center justify-center gap-1.5 border border-dashed border-blue-200 hover:border-blue-500 rounded-md bg-blue-50/50"
-                    >
-                      <PlusCircle className="h-4 w-4" /> Enter Another Google Email
-                    </button>
-                  </div>
-                </>
-              )}
-            </div>
-
-            {/* Google Footer */}
-            <div className="bg-neutral-50 p-3 text-center border-t text-[11px] text-neutral-500">
-              To continue, Google will share your name and email address with DELA BAGS.
-            </div>
+        <div className="space-y-2">
+          <div className="flex justify-between items-center">
+            <Label htmlFor="password">Password</Label>
+            <Link href="/forgot-password" className="text-xs text-muted-foreground hover:text-black underline underline-offset-2">
+              Forgot password?
+            </Link>
+          </div>
+          <div className="relative">
+            <Input
+              id="password"
+              type={showPassword ? 'text' : 'password'}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              required
+              autoComplete="current-password"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-black"
+            >
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
           </div>
         </div>
-      )}
-    </>
+
+        <Button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-black text-white hover:bg-neutral-800 rounded-none h-12 text-base font-bold"
+        >
+          {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Signing in...</> : 'SIGN IN'}
+        </Button>
+      </form>
+
+      <p className="mt-6 text-center text-sm text-muted-foreground">
+        Don&apos;t have an account?{' '}
+        <Link href="/register" className="font-medium text-black underline underline-offset-4">
+          Create one
+        </Link>
+      </p>
+
+      <div className="mt-6 p-3 bg-neutral-50 border text-xs text-muted-foreground">
+        <strong>Admin Login:</strong> DELAbags.service@gmail.com / saadansari9
+      </div>
+    </div>
   );
 }
 

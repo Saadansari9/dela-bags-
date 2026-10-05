@@ -1,5 +1,6 @@
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
+import GoogleProvider from 'next-auth/providers/google';
 import bcrypt from 'bcryptjs';
 
 const ADMIN_EMAIL = 'delabags.service@gmail.com';
@@ -7,6 +8,10 @@ const ADMIN_EMAIL_ALT = 'cielbags.service@gmail.com';
 
 export const authOptions: NextAuthOptions = {
   providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID || '',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+    }),
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
@@ -18,11 +23,16 @@ export const authOptions: NextAuthOptions = {
 
         const emailLower = credentials.email.toLowerCase().trim();
 
-        // 1. Check if Admin Login
+        // 1. Check Admin Login
         if (emailLower === ADMIN_EMAIL || emailLower === ADMIN_EMAIL_ALT) {
-          const isPassValid = credentials.password === 'saadansari9' || 
-            (credentials.password && await bcrypt.compare(credentials.password, '$2b$10$Brt8c22nSbAeLZw07fxuG.WC7aRUpJxX7XH5e8eVaJ3d8Ctdh/zlS'));
-          
+          const isPassValid =
+            credentials.password === 'saadansari9' ||
+            (credentials.password &&
+              (await bcrypt.compare(
+                credentials.password,
+                '$2b$10$Brt8c22nSbAeLZw07fxuG.WC7aRUpJxX7XH5e8eVaJ3d8Ctdh/zlS'
+              )));
+
           if (isPassValid) {
             return {
               id: 'admin-1',
@@ -33,13 +43,13 @@ export const authOptions: NextAuthOptions = {
           }
         }
 
-        // 2. Dynamic Customer Login — ANY Google or Customer Email is ACTIVE & ALLOWED!
+        // 2. Customer Email Login
         const rawName = emailLower.split('@')[0].replace(/[._-]/g, ' ');
         const formattedName = rawName.replace(/\b\w/g, (char) => char.toUpperCase());
 
         return {
           id: `user-${emailLower}`,
-          name: formattedName || 'Google User',
+          name: formattedName || 'Customer',
           email: credentials.email,
           role: 'CUSTOMER',
         };
