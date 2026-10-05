@@ -4,18 +4,21 @@ export const dynamic = 'force-dynamic';
 
 import Image from "next/image";
 import Link from "next/link";
-import { Lock, ShieldCheck, QrCode, CreditCard, Banknote, CheckCircle2, Tag } from "lucide-react";
+import { Lock, ShieldCheck, QrCode, CreditCard, Banknote, Tag, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useCart } from "@/store/useCart";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { loadRazorpayScript, type RazorpayOptions } from "@/lib/razorpay";
 
 export default function CheckoutPage() {
   const [mounted, setMounted] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<'cod' | 'upi' | 'razorpay'>('cod');
+  const [paymentMethod, setPaymentMethod] = useState<'cod' | 'upi' | 'razorpay'>('razorpay');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
   const [form, setForm] = useState({
     email: '',
     firstName: '',
@@ -45,17 +48,82 @@ export default function CheckoutPage() {
     setForm({ ...form, [e.target.id]: e.target.value });
   };
 
-  const handlePlaceOrder = (e: React.FormEvent) => {
+  const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
     setLoading(true);
 
     const randomNum = Math.floor(10000 + Math.random() * 90000);
     const orderId = `DELA-${randomNum}`;
+    const fullName = `${form.firstName} ${form.lastName}`.trim() || 'Customer';
 
-    setTimeout(() => {
-      cart.clearCart();
-      router.push(`/orders/${orderId}`);
-    }, 1500);
+    // 1. CASH ON DELIVERY (COD) FLOW
+    if (paymentMethod === 'cod') {
+      setTimeout(() => {
+        cart.clearCart();
+        router.push(`/orders/${orderId}?status=COD_PLACED`);
+      }, 1200);
+      return;
+    }
+
+    // 2. RAZORPAY / UPI ONLINE PAYMENT FLOW
+    try {
+      const isLoaded = await loadRazorpayScript();
+      if (!isLoaded) {
+        setError('Failed to load Razorpay Payment Gateway. Please check your internet connection.');
+        setLoading(false);
+        return;
+      }
+
+      // Call Backend API to create Razorpay Order Session
+      const apiRes = await fetch('/api/checkout/razorpay', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: grandTotal,
+          customerName: fullName,
+          customerEmail: form.email,
+          customerPhone: form.phone,
+        }),
+      });
+
+      const orderData = await apiRes.json();
+      if (!apiRes.ok || !orderData.success) {
+        setError(orderData.error || 'Failed to initiate payment.');
+        setLoading(false);
+        return;
+      }
+
+      // Launch Official Razorpay Payment Dialog
+      const options: RazorpayOptions = {
+        key: orderData.key,
+        amount: orderData.amount,
+        currency: orderData.currency,
+        name: 'DELA BAGS',
+        description: `Order Payment for ${cart.items.length} items`,
+        image: 'https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=200&auto=format&fit=crop',
+        prefill: {
+          name: fullName,
+          email: form.email,
+          contact: form.phone,
+        },
+        theme: {
+          color: '#000000',
+        },
+        handler: function (response) {
+          console.log('Razorpay Payment Success:', response);
+          cart.clearCart();
+          router.push(`/orders/${orderId}?pay_id=${response.razorpay_payment_id}&status=PAID_SUCCESS`);
+        },
+      };
+
+      const rzp = new (window as unknown as { Razorpay: new (opts: RazorpayOptions) => { open: () => void } }).Razorpay(options);
+      rzp.open();
+      setLoading(false);
+    } catch {
+      setError('An unexpected error occurred while launching payment.');
+      setLoading(false);
+    }
   };
 
   if (!mounted || cart.items.length === 0) return null;
@@ -65,9 +133,15 @@ export default function CheckoutPage() {
       <div className="text-center mb-8">
         <h1 className="font-heading text-3xl font-bold">Secure Checkout</h1>
         <div className="flex items-center justify-center gap-2 mt-2 text-sm text-emerald-600 font-medium">
-          <Lock className="h-4 w-4" /> 256-Bit SSL Encrypted & PCI Compliant
+          <Lock className="h-4 w-4" /> 256-Bit SSL Encrypted & Razorpay Compliant
         </div>
       </div>
+
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6 text-sm max-w-2xl mx-auto">
+          {error}
+        </div>
+      )}
 
       <div className="flex flex-col lg:flex-row-reverse gap-12">
         {/* Order Summary */}
@@ -190,7 +264,7 @@ export default function CheckoutPage() {
                   <Input id="pincode" placeholder="400008" value={form.pincode} onChange={handleInputChange} className="rounded-none bg-neutral-50" required />
                 </div>
                 <div className="space-y-1">
-                  <Label htmlFor="phone">Phone Number (for Courier Updates)</Label>
+                  <Label htmlFor="phone">Phone Number (for Order & Delivery SMS/WhatsApp)</Label>
                   <Input id="phone" type="tel" placeholder="+91 98765 43210" value={form.phone} onChange={handleInputChange} className="rounded-none bg-neutral-50" required />
                 </div>
               </div>
@@ -198,30 +272,30 @@ export default function CheckoutPage() {
 
             {/* Payment Method */}
             <div>
-              <h2 className="text-xl font-bold mb-2">Payment Method</h2>
-              <p className="text-xs text-muted-foreground mb-4">Choose your preferred secure payment method.</p>
+              <h2 className="text-xl font-bold mb-2">Select Payment Gateway</h2>
+              <p className="text-xs text-muted-foreground mb-4">All transactions are encrypted and 100% secure.</p>
               
               <div className="border border-neutral-300 divide-y bg-white">
-                {/* Cash on Delivery */}
-                <div className={`p-4 transition-colors ${paymentMethod === 'cod' ? 'bg-neutral-50' : ''}`}>
+                {/* Razorpay Online */}
+                <div className={`p-4 transition-colors ${paymentMethod === 'razorpay' ? 'bg-neutral-50' : ''}`}>
                   <label className="flex items-center gap-3 cursor-pointer">
                     <input
                       type="radio"
                       name="payment"
-                      checked={paymentMethod === 'cod'}
-                      onChange={() => setPaymentMethod('cod')}
+                      checked={paymentMethod === 'razorpay'}
+                      onChange={() => setPaymentMethod('razorpay')}
                       className="accent-black h-4 w-4"
                     />
                     <div className="flex items-center justify-between w-full">
                       <span className="font-bold text-sm flex items-center gap-2">
-                        <Banknote className="h-4 w-4 text-emerald-600" /> Cash on Delivery (COD)
+                        <CreditCard className="h-4 w-4 text-blue-600" /> Razorpay Online (Cards, NetBanking, Wallets)
                       </span>
-                      <span className="text-xs bg-emerald-100 text-emerald-800 px-2 py-0.5 font-bold">POPULAR</span>
+                      <span className="text-[10px] bg-blue-100 text-blue-800 px-2 py-0.5 font-bold uppercase">INSTANT</span>
                     </div>
                   </label>
-                  {paymentMethod === 'cod' && (
+                  {paymentMethod === 'razorpay' && (
                     <div className="mt-3 pl-7 text-xs text-muted-foreground">
-                      Pay cash to the courier agent when your package arrives at your doorstep.
+                      Secured by Razorpay. Click &quot;PAY NOW&quot; to open card/netbanking checkout popup.
                     </div>
                   )}
                 </div>
@@ -238,36 +312,37 @@ export default function CheckoutPage() {
                     />
                     <div className="flex items-center justify-between w-full">
                       <span className="font-bold text-sm flex items-center gap-2">
-                        <QrCode className="h-4 w-4 text-purple-600" /> Instant UPI (Google Pay, PhonePe, Paytm)
+                        <QrCode className="h-4 w-4 text-purple-600" /> Instant UPI (Google Pay, PhonePe, Paytm, BHIM)
                       </span>
+                      <span className="text-[10px] bg-purple-100 text-purple-800 px-2 py-0.5 font-bold uppercase">POPULAR</span>
                     </div>
                   </label>
                   {paymentMethod === 'upi' && (
-                    <div className="mt-3 pl-7 text-xs text-muted-foreground space-y-2">
-                      <p>Scan & Pay via any UPI app or UPI ID: <strong>9930009639@okbizaxis</strong></p>
+                    <div className="mt-3 pl-7 text-xs text-muted-foreground space-y-1">
+                      <p>Pay via Google Pay, PhonePe, Paytm, or UPI ID: <strong>9930009639@okbizaxis</strong></p>
                     </div>
                   )}
                 </div>
 
-                {/* Razorpay Online */}
-                <div className={`p-4 transition-colors ${paymentMethod === 'razorpay' ? 'bg-neutral-50' : ''}`}>
+                {/* Cash on Delivery */}
+                <div className={`p-4 transition-colors ${paymentMethod === 'cod' ? 'bg-neutral-50' : ''}`}>
                   <label className="flex items-center gap-3 cursor-pointer">
                     <input
                       type="radio"
                       name="payment"
-                      checked={paymentMethod === 'razorpay'}
-                      onChange={() => setPaymentMethod('razorpay')}
+                      checked={paymentMethod === 'cod'}
+                      onChange={() => setPaymentMethod('cod')}
                       className="accent-black h-4 w-4"
                     />
                     <div className="flex items-center justify-between w-full">
                       <span className="font-bold text-sm flex items-center gap-2">
-                        <CreditCard className="h-4 w-4 text-blue-600" /> Online Payment (Cards, NetBanking, Razorpay)
+                        <Banknote className="h-4 w-4 text-emerald-600" /> Cash on Delivery (COD)
                       </span>
                     </div>
                   </label>
-                  {paymentMethod === 'razorpay' && (
+                  {paymentMethod === 'cod' && (
                     <div className="mt-3 pl-7 text-xs text-muted-foreground">
-                      Secured by Razorpay Gateway. Redirects to encrypted payment page.
+                      Pay cash to the courier delivery agent when your order arrives.
                     </div>
                   )}
                 </div>
@@ -281,11 +356,11 @@ export default function CheckoutPage() {
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
-                  <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  PROCESSING YOUR ORDER...
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                  INITIATING PAYMENT...
                 </span>
               ) : (
-                `CONFIRM & PLACE ORDER (₹${grandTotal})`
+                `PAY NOW & PLACE ORDER (₹${grandTotal})`
               )}
             </Button>
           </form>
