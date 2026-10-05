@@ -61,15 +61,10 @@ function LoginForm() {
     }
   };
 
-  const handleGoogleSignIn = async () => {
+  const handleGoogleSignIn = () => {
     setGoogleLoading(true);
     setError('');
-    try {
-      await signIn('google', { callbackUrl });
-    } catch {
-      setError('Failed to sign in with Google.');
-      setGoogleLoading(false);
-    }
+    signIn('google', { callbackUrl });
   };
 
   return (
