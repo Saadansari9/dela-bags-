@@ -24,6 +24,9 @@ export default function AdminLayout({
           <Link href="/admin/orders" className="flex items-center gap-3 px-3 py-2 rounded hover:bg-white/5 text-neutral-400 hover:text-white transition-colors">
             <Package className="h-5 w-5" /> Orders
           </Link>
+          <Link href="/admin/coupons" className="flex items-center gap-3 px-3 py-2 rounded hover:bg-white/5 text-neutral-400 hover:text-white transition-colors">
+            <FileText className="h-5 w-5" /> Coupons
+          </Link>
           <Link href="/admin/customers" className="flex items-center gap-3 px-3 py-2 rounded hover:bg-white/5 text-neutral-400 hover:text-white transition-colors">
             <Users className="h-5 w-5" /> Customers
           </Link>

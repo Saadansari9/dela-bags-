@@ -10,6 +10,7 @@ import { useState, useEffect } from 'react';
 import { useCart } from '@/store/useCart';
 import { useWishlist } from '@/store/useWishlist';
 import type { Product } from '@/lib/data/products';
+import { ProductReviews } from '@/components/ProductReviews';
 
 export default function ProductClient({ product }: { product: Product }) {
   const [selectedColor, setSelectedColor] = useState(product.colors[0] || '');
@@ -266,6 +267,9 @@ export default function ProductClient({ product }: { product: Product }) {
           </Tabs>
         </div>
       </div>
+
+      {/* Customer Reviews Section */}
+      <ProductReviews productName={product.name} />
     </div>
   );
 }
