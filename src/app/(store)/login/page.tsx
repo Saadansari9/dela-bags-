@@ -166,10 +166,6 @@ function LoginForm() {
           Create one
         </Link>
       </p>
-
-      <div className="mt-6 p-3 bg-neutral-50 border text-xs text-muted-foreground">
-        <strong>Admin Login:</strong> DELAbags.service@gmail.com / saadansari9
-      </div>
     </div>
   );
 }
