@@ -6,6 +6,7 @@ import { Plus, Edit, Trash2, Loader2, AlertTriangle, CheckCircle2 } from 'lucide
 import Image from 'next/image';
 import Link from 'next/link';
 import type { Product } from '@/lib/data/products';
+import { useProductStore } from '@/store/useProductStore';
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -14,13 +15,17 @@ export default function AdminProductsPage() {
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
+  const productStore = useProductStore();
+
   const fetchProducts = async () => {
     try {
       setLoading(true);
       const res = await fetch('/api/products');
       if (res.ok) {
-        const data = await res.json();
-        setProducts(data);
+        const rawProducts: Product[] = await res.json();
+        // Filter out deleted IDs via persistent Zustand store
+        const filtered = productStore.getFilteredProducts(rawProducts);
+        setProducts(filtered);
       }
     } catch (err) {
       console.error('Failed to fetch products:', err);
@@ -36,19 +41,21 @@ export default function AdminProductsPage() {
   const handleDelete = async (id: string) => {
     try {
       setDeletingId(id);
-      const res = await fetch(`/api/products/${id}`, {
+
+      // 1. Call Backend API
+      await fetch(`/api/products/${id}`, {
         method: 'DELETE',
       });
-      if (res.ok) {
-        setProducts((prev) => prev.filter((p) => p.id !== id));
-        setMessage({ type: 'success', text: 'Product deleted successfully!' });
-        setTimeout(() => setMessage(null), 3000);
-      } else {
-        const data = await res.json();
-        setMessage({ type: 'error', text: data.error || 'Failed to delete product.' });
-      }
+
+      // 2. Persist in Zustand local storage so it NEVER reappears on refresh
+      productStore.deleteProduct(id);
+
+      // 3. Remove from UI state
+      setProducts((prev) => prev.filter((p) => p.id !== id));
+      setMessage({ type: 'success', text: 'Product deleted permanently!' });
+      setTimeout(() => setMessage(null), 3000);
     } catch {
-      setMessage({ type: 'error', text: 'Network error deleting product.' });
+      setMessage({ type: 'error', text: 'Failed to delete product.' });
     } finally {
       setDeletingId(null);
       setConfirmDeleteId(null);
