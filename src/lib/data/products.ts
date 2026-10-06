@@ -363,8 +363,53 @@ export async function getNewArrivals(): Promise<Product[]> {
 
 /** Get products by category */
 export async function getProductsByCategory(categorySlug: string): Promise<Product[]> {
-  // TODO: Replace with → return prisma.product.findMany({ where: { category: { slug: categorySlug } } });
   return PRODUCTS.filter((p) => p.categorySlug === categorySlug);
+}
+
+/** Delete product by ID */
+export async function deleteProduct(id: string): Promise<boolean> {
+  const index = PRODUCTS.findIndex((p) => p.id === id);
+  if (index !== -1) {
+    PRODUCTS.splice(index, 1);
+    return true;
+  }
+  return false;
+}
+
+/** Add a new product */
+export async function addProduct(productData: Partial<Product>): Promise<Product> {
+  const categoryObj = CATEGORIES.find((c) => c.slug === productData.categorySlug);
+  const newProduct: Product = {
+    id: `prod_${Date.now()}`,
+    name: productData.name || 'New Bag',
+    slug: productData.slug || `new-bag-${Date.now()}`,
+    description: productData.description || '',
+    price: Number(productData.price) || 0,
+    originalPrice: productData.originalPrice ? Number(productData.originalPrice) : undefined,
+    sku: productData.sku || `SKU-${Date.now()}`,
+    stock: Number(productData.stock) || 0,
+    categorySlug: productData.categorySlug || 'ladies-handbags',
+    category: categoryObj ? categoryObj.name : 'Ladies Handbags',
+    brand: productData.brand || 'DELA BAGS',
+    colors: productData.colors && productData.colors.length > 0 ? productData.colors : ['Black'],
+    sizes: productData.sizes && productData.sizes.length > 0 ? productData.sizes : ['Medium'],
+    images: productData.images && productData.images.length > 0 ? productData.images : ['https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=1000&auto=format&fit=crop'],
+    featured: productData.featured || false,
+    bestseller: productData.bestseller || false,
+    newArrival: productData.newArrival ?? true,
+    rating: 5.0,
+    reviews: 1,
+  };
+  PRODUCTS.unshift(newProduct);
+  return newProduct;
+}
+
+/** Update existing product */
+export async function updateProduct(id: string, updates: Partial<Product>): Promise<Product | null> {
+  const index = PRODUCTS.findIndex((p) => p.id === id);
+  if (index === -1) return null;
+  PRODUCTS[index] = { ...PRODUCTS[index], ...updates };
+  return PRODUCTS[index];
 }
 
 export const CATEGORIES = [
