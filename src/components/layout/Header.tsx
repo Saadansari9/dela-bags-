@@ -8,6 +8,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { useCart } from "@/store/useCart";
 import { useEffect, useState } from "react";
 import { useSession, signOut } from "next-auth/react";
+import CartDrawer from "./CartDrawer";
+import SearchModal from "./SearchModal";
 
 export default function Header() {
   const [mounted, setMounted] = useState(false);
@@ -92,10 +94,12 @@ export default function Header() {
 
           {/* Right Icons */}
           <div className="flex items-center justify-end gap-1 md:gap-2 flex-1 md:flex-none">
-            <Button variant="ghost" size="icon" className="hidden sm:inline-flex text-neutral-700 hover:text-black hover:bg-neutral-100">
-              <Search className="h-5 w-5" />
-              <span className="sr-only">Search</span>
-            </Button>
+            <SearchModal>
+              <Button variant="ghost" size="icon" className="text-neutral-700 hover:text-black hover:bg-neutral-100">
+                <Search className="h-5 w-5" />
+                <span className="sr-only">Search</span>
+              </Button>
+            </SearchModal>
 
             <Link href="/wishlist">
               <Button variant="ghost" size="icon" className="text-neutral-700 hover:text-black hover:bg-neutral-100">
@@ -149,8 +153,8 @@ export default function Header() {
               </Link>
             )}
 
-            {/* Cart */}
-            <Link href="/cart">
+            {/* Cart Drawer */}
+            <CartDrawer>
               <Button variant="ghost" size="icon" className="relative text-neutral-700 hover:text-black hover:bg-neutral-100">
                 <ShoppingBag className="h-5 w-5" />
                 <span className="sr-only">Cart</span>
@@ -160,7 +164,7 @@ export default function Header() {
                   </span>
                 )}
               </Button>
-            </Link>
+            </CartDrawer>
           </div>
         </div>
       </div>
