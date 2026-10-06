@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 import CartDrawer from "./CartDrawer";
 import SearchModal from "./SearchModal";
+import { GiftFinderModal } from "../GiftFinderModal";
 
 export default function Header() {
   const [mounted, setMounted] = useState(false);
@@ -84,16 +85,21 @@ export default function Header() {
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8 text-[11px] font-semibold tracking-[0.2em] uppercase">
+          <nav className="hidden md:flex items-center gap-6 text-[11px] font-semibold tracking-[0.2em] uppercase">
             <Link href="/" className="transition-colors hover:text-black text-neutral-600">Home</Link>
             <Link href="/shop" className="transition-colors hover:text-black text-neutral-600">Shop</Link>
             <Link href="/shop?category=ladies-handbags" className="transition-colors hover:text-black text-neutral-600">Women</Link>
             <Link href="/shop?category=mens-bags" className="transition-colors hover:text-black text-neutral-600">Men</Link>
-            <Link href="/shop?sort=new" className="transition-colors hover:text-black text-neutral-600">New Arrivals</Link>
+            <Link href="/rewards" className="transition-colors hover:text-amber-800 text-amber-700 font-bold flex items-center gap-1">✨ VIP Club</Link>
+            <Link href="/reviews" className="transition-colors hover:text-black text-neutral-600">Reviews</Link>
           </nav>
 
           {/* Right Icons */}
-          <div className="flex items-center justify-end gap-1 md:gap-2 flex-1 md:flex-none">
+          <div className="flex items-center justify-end gap-1 md:gap-3 flex-1 md:flex-none">
+            <div className="hidden lg:block">
+              <GiftFinderModal />
+            </div>
+
             <SearchModal>
               <Button variant="ghost" size="icon" className="text-neutral-700 hover:text-black hover:bg-neutral-100">
                 <Search className="h-5 w-5" />

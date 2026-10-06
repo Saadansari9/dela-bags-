@@ -12,6 +12,8 @@ import { useCart } from '@/store/useCart';
 import { useWishlist } from '@/store/useWishlist';
 import type { Product } from '@/lib/data/products';
 import { ProductReviews } from '@/components/ProductReviews';
+import { MonogramCustomizer } from '@/components/MonogramCustomizer';
+import { BagCapacityVisualizer } from '@/components/BagCapacityVisualizer';
 
 export default function ProductClient({ product }: { product: Product }) {
   const [selectedColor, setSelectedColor] = useState(product.colors[0] || '');
@@ -19,6 +21,7 @@ export default function ProductClient({ product }: { product: Product }) {
   const [quantity, setQuantity] = useState(1);
   const [mainImage, setMainImage] = useState(product.images[0]);
   const [mounted, setMounted] = useState(false);
+  const [monogram, setMonogram] = useState<{ text: string; style: string } | null>(null);
 
   // Pincode Estimator State
   const [pincode, setPincode] = useState('');
@@ -49,6 +52,7 @@ export default function ProductClient({ product }: { product: Product }) {
       quantity,
       color: selectedColor,
       size: selectedSize,
+      monogram: monogram ? monogram : undefined,
     });
   };
 
@@ -206,6 +210,11 @@ export default function ProductClient({ product }: { product: Product }) {
             </div>
           )}
 
+          {/* Monogram Engraving Customizer */}
+          <div className="mb-6">
+            <MonogramCustomizer onMonogramChange={setMonogram} />
+          </div>
+
           {/* Quantity Selector */}
           <div className="mb-6 flex items-center gap-4">
             <span className="text-xs uppercase tracking-wider font-bold">Quantity:</span>
@@ -254,6 +263,11 @@ export default function ProductClient({ product }: { product: Product }) {
             {pincodeStatus.error && (
               <p className="text-xs text-red-600 font-medium mt-2">{pincodeStatus.error}</p>
             )}
+          </div>
+
+          {/* Bag Capacity & Storage Visualizer */}
+          <div className="mb-6">
+            <BagCapacityVisualizer bagName={product.name} category={product.category} />
           </div>
 
           {/* Action Buttons */}

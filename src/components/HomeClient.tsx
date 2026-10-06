@@ -286,6 +286,49 @@ export default function HomeClient({
         </div>
       </section>
 
+      {/* LUXURY VIP PRIVÉ & GIFT FINDER BANNER */}
+      <section className="py-12 bg-neutral-900 text-white border-b border-neutral-800">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            {/* VIP Club */}
+            <div className="bg-neutral-950 p-8 border border-neutral-800 relative overflow-hidden group">
+              <div className="space-y-3 relative z-10">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-amber-400 bg-amber-400/10 px-2.5 py-1 border border-amber-400/30 inline-block">
+                  ✨ DELA VIP Privé Atelier
+                </span>
+                <h3 className="font-heading text-2xl font-bold uppercase">Earn Privé Points On Every Purchase</h3>
+                <p className="text-neutral-400 text-xs leading-relaxed font-light">
+                  Join our exclusive loyalty tier. Unlock free Gold Foil monogramming, priority express dispatch, and instant discount vouchers.
+                </p>
+                <Link href="/rewards">
+                  <Button className="mt-2 bg-amber-400 text-black hover:bg-amber-300 rounded-none h-10 text-xs font-bold uppercase tracking-wider">
+                    Explore VIP Club <ArrowRight className="h-3.5 w-3.5 ml-1" />
+                  </Button>
+                </Link>
+              </div>
+            </div>
+
+            {/* Reviews Wall */}
+            <div className="bg-neutral-950 p-8 border border-neutral-800 relative overflow-hidden group">
+              <div className="space-y-3 relative z-10">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-green-400 bg-green-400/10 px-2.5 py-1 border border-green-400/30 inline-block">
+                  ⭐ 4.9 / 5.0 Star Rated
+                </span>
+                <h3 className="font-heading text-2xl font-bold uppercase">10,000+ Verified Customer Reviews</h3>
+                <p className="text-neutral-400 text-xs leading-relaxed font-light">
+                  Read unfiltered testimonials, unboxing photos, and leather quality reviews directly from fashion lovers across India.
+                </p>
+                <Link href="/reviews">
+                  <Button variant="outline" className="mt-2 border-white text-white hover:bg-white hover:text-black rounded-none h-10 text-xs font-bold uppercase tracking-wider">
+                    Read Customer Reviews <ArrowRight className="h-3.5 w-3.5 ml-1" />
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* 4. BEST SELLERS PRODUCT GRID */}
       <section className="py-20 bg-[#FAF9F6]">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">

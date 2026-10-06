@@ -143,12 +143,21 @@ export default function CartDrawer({ children }: { children?: React.ReactNode })
                       </button>
                     </div>
 
-                    {(item.color || item.size) && (
-                      <p className="text-[11px] text-neutral-500">
-                        {item.color && <span>Color: {item.color}</span>}
-                        {item.color && item.size && <span> • </span>}
-                        {item.size && <span>Size: {item.size}</span>}
-                      </p>
+                    {(item.color || item.size || item.monogram) && (
+                      <div className="space-y-0.5 text-[11px] text-neutral-500">
+                        {(item.color || item.size) && (
+                          <p>
+                            {item.color && <span>Color: {item.color}</span>}
+                            {item.color && item.size && <span> • </span>}
+                            {item.size && <span>Size: {item.size}</span>}
+                          </p>
+                        )}
+                        {item.monogram && (
+                          <p className="text-amber-800 font-semibold flex items-center gap-1 text-[10px]">
+                            <Sparkles className="h-3 w-3 text-amber-600" /> Monogram: <span className="font-mono bg-amber-50 px-1 border border-amber-200 uppercase">{item.monogram.text}</span> ({item.monogram.style})
+                          </p>
+                        )}
+                      </div>
                     )}
                   </div>
 

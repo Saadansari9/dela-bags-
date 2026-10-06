@@ -11,6 +11,10 @@ export interface CartItem {
   quantity: number;
   color?: string;
   size?: string;
+  monogram?: {
+    text: string;
+    style: string;
+  };
 }
 
 export interface Coupon {
@@ -49,7 +53,7 @@ export const useCart = create<CartStore>()(
       coupon: null,
 
       addItem: (item) => {
-        const id = `${item.productId}-${item.color || ''}-${item.size || ''}`;
+        const id = `${item.productId}-${item.color || ''}-${item.size || ''}-${item.monogram ? item.monogram.text + '_' + item.monogram.style : ''}`;
         set((state) => {
           const existingItem = state.items.find((i) => i.id === id);
           if (existingItem) {

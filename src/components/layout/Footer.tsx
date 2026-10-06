@@ -43,8 +43,8 @@ export default function Footer() {
             <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-white">Quick Links</h3>
             <ul className="space-y-2 text-xs text-neutral-400 font-medium tracking-wider uppercase">
               <li><Link href="/shop" className="hover:text-white transition-colors">Shop All</Link></li>
-              <li><Link href="/shop?category=ladies-handbags" className="hover:text-white transition-colors">Women's Collection</Link></li>
-              <li><Link href="/shop?category=mens-bags" className="hover:text-white transition-colors">Men's Collection</Link></li>
+              <li><Link href="/rewards" className="hover:text-amber-400 text-amber-300 font-bold transition-colors">✨ VIP Privé Rewards</Link></li>
+              <li><Link href="/reviews" className="hover:text-white transition-colors">Customer Reviews Wall</Link></li>
               <li><Link href="/about" className="hover:text-white transition-colors">About Us</Link></li>
               <li><Link href="/contact" className="hover:text-white transition-colors">Contact Us</Link></li>
             </ul>
@@ -54,6 +54,7 @@ export default function Footer() {
           <div className="space-y-4">
             <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-white">Customer Service</h3>
             <ul className="space-y-2 text-xs text-neutral-400 font-medium tracking-wider uppercase">
+              <li><Link href="/track-order" className="hover:text-white transition-colors font-bold text-white">📦 Track Order Live</Link></li>
               <li><Link href="/faq" className="hover:text-white transition-colors">FAQ</Link></li>
               <li><Link href="/shipping-policy" className="hover:text-white transition-colors">Shipping Policy</Link></li>
               <li><Link href="/return-policy" className="hover:text-white transition-colors">Returns & Refunds</Link></li>
