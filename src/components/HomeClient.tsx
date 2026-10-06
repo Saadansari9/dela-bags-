@@ -69,30 +69,6 @@ const CATEGORIES = [
   { name: "Travel Bags", slug: "travel-bags", image: "https://images.unsplash.com/photo-1553531384-411a4ff74811?q=80&w=1000&auto=format&fit=crop" },
 ];
 
-const REVIEWS = [
-  {
-    name: "Priya Sharma",
-    location: "Mumbai",
-    rating: 5,
-    text: "The quality of the Classic Leather Handbag exceeded my expectations! The stitching is flawless and it holds all my work essentials easily.",
-    date: "Verified Buyer",
-  },
-  {
-    name: "Rahul Verma",
-    location: "Delhi",
-    rating: 5,
-    text: "Ordered the Men's Crossbody Bag. Extremely durable nylon and leather accents. Fast shipping via WhatsApp support too!",
-    date: "Verified Buyer",
-  },
-  {
-    name: "Ananya Patel",
-    location: "Bangalore",
-    rating: 5,
-    text: "The Everyday Tote is my new favorite work bag. Lightweight, spacious, and super classy. Getting compliments daily!",
-    date: "Verified Buyer",
-  },
-];
-
 export default function HomeClient({
   bestsellers,
   newArrivals,
@@ -312,15 +288,15 @@ export default function HomeClient({
             <div className="bg-neutral-950 p-8 border border-neutral-800 relative overflow-hidden group">
               <div className="space-y-3 relative z-10">
                 <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-green-400 bg-green-400/10 px-2.5 py-1 border border-green-400/30 inline-block">
-                  ⭐ 4.9 / 5.0 Star Rated
+                  ⭐ 100% Authentic Customer Feedback
                 </span>
-                <h3 className="font-heading text-2xl font-bold uppercase">10,000+ Verified Customer Reviews</h3>
+                <h3 className="font-heading text-2xl font-bold uppercase">Customer Reviews & Testimonials</h3>
                 <p className="text-neutral-400 text-xs leading-relaxed font-light">
-                  Read unfiltered testimonials, unboxing photos, and leather quality reviews directly from fashion lovers across India.
+                  Read genuine feedback and unboxing experiences submitted directly by verified DELA BAGS buyers across India.
                 </p>
                 <Link href="/reviews">
                   <Button variant="outline" className="mt-2 border-white text-white hover:bg-white hover:text-black rounded-none h-10 text-xs font-bold uppercase tracking-wider">
-                    Read Customer Reviews <ArrowRight className="h-3.5 w-3.5 ml-1" />
+                    Read & Write Customer Reviews <ArrowRight className="h-3.5 w-3.5 ml-1" />
                   </Button>
                 </Link>
               </div>
@@ -428,39 +404,53 @@ export default function HomeClient({
         </div>
       </section>
 
-      {/* 5. CUSTOMER REVIEWS */}
+      {/* 5. AUTHENTIC ATELIER COMMITMENT & CUSTOMER REVIEWS */}
       <section className="py-20 bg-white border-t border-neutral-200/80">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl">
           <div className="text-center max-w-xl mx-auto mb-14">
-            <span className="text-[11px] uppercase tracking-[0.25em] text-neutral-500 font-semibold">Testimonials</span>
-            <h2 className="font-heading text-3xl sm:text-4xl font-bold text-neutral-900 mt-1">Loved By Our Customers</h2>
+            <span className="text-[11px] uppercase tracking-[0.25em] text-neutral-500 font-semibold">100% Genuine Quality</span>
+            <h2 className="font-heading text-3xl sm:text-4xl font-bold text-neutral-900 mt-1">Why Choose DELA BAGS</h2>
             <div className="h-0.5 w-10 bg-neutral-900 mx-auto mt-3" />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {REVIEWS.map((rev, i) => (
-              <div key={i} className="bg-[#FAF9F6] p-6 rounded-none border border-neutral-200/80 flex flex-col justify-between space-y-4">
-                <div className="space-y-3">
-                  <div className="flex gap-1">
-                    {Array(rev.rating).fill(0).map((_, idx) => (
-                      <Star key={idx} className="h-3.5 w-3.5 text-neutral-900 fill-neutral-900" />
-                    ))}
-                  </div>
-                  <p className="text-neutral-700 text-xs italic leading-relaxed">"{rev.text}"</p>
-                </div>
-                <div className="flex items-center gap-3 pt-3 border-t border-neutral-200/60">
-                  <div className="h-7 w-7 bg-black text-white font-bold text-xs rounded-full flex items-center justify-center shrink-0">
-                    {rev.name[0]}
-                  </div>
-                  <div>
-                    <p className="font-bold text-xs text-neutral-900">{rev.name}</p>
-                    <p className="text-[10px] text-neutral-500 flex items-center gap-1">
-                      <CheckCircle2 className="h-3 w-3 text-black" /> {rev.date} • {rev.location}
-                    </p>
-                  </div>
-                </div>
+            <div className="bg-[#FAF9F6] p-6 rounded-none border border-neutral-200/80 flex flex-col justify-between space-y-3">
+              <div className="space-y-2">
+                <span className="text-2xl">✨</span>
+                <h3 className="font-heading font-bold text-sm uppercase text-black">Master Atelier Craftsmanship</h3>
+                <p className="text-neutral-600 text-xs leading-relaxed">
+                  Handcrafted with reinforced stitching, gold-tone anti-tarnish zippers, and premium vegan leather.
+                </p>
               </div>
-            ))}
+            </div>
+
+            <div className="bg-[#FAF9F6] p-6 rounded-none border border-neutral-200/80 flex flex-col justify-between space-y-3">
+              <div className="space-y-2">
+                <span className="text-2xl">🚚</span>
+                <h3 className="font-heading font-bold text-sm uppercase text-black">Fast Pan-India Delivery & COD</h3>
+                <p className="text-neutral-600 text-xs leading-relaxed">
+                  Express shipping across 19,000+ pincodes in India with Cash on Delivery & instant UPI options.
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-[#FAF9F6] p-6 rounded-none border border-neutral-200/80 flex flex-col justify-between space-y-3">
+              <div className="space-y-2">
+                <span className="text-2xl">🛡️</span>
+                <h3 className="font-heading font-bold text-sm uppercase text-black">7-Day Easy Returns Guarantee</h3>
+                <p className="text-neutral-600 text-xs leading-relaxed">
+                  No questions asked returns and exchanges if you aren&apos;t 100% satisfied with your handbag.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-12 text-center">
+            <Link href="/reviews">
+              <Button className="bg-black text-white hover:bg-neutral-800 rounded-none h-12 px-8 text-xs font-bold uppercase tracking-wider">
+                Visit Authentic Customer Reviews Wall <ArrowRight className="h-4 w-4 ml-2" />
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
