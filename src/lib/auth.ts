@@ -15,15 +15,40 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
-        email: { label: 'Email', type: 'email' },
+        email: { label: 'Email or Phone', type: 'text' },
         password: { label: 'Password', type: 'password' },
+        phone: { label: 'Phone', type: 'text' },
       },
       async authorize(credentials) {
+        // 1. Direct Phone Number OTP Login
+        if (credentials?.phone) {
+          const cleanPhone = credentials.phone.replace(/[^0-9]/g, '');
+          if (cleanPhone.length >= 10) {
+            return {
+              id: `phone-${cleanPhone.slice(-10)}`,
+              name: `Customer (${cleanPhone.slice(-10)})`,
+              email: `${cleanPhone.slice(-10)}@delabags.com`,
+              role: 'CUSTOMER',
+            };
+          }
+        }
+
         if (!credentials?.email) return null;
 
         const emailLower = credentials.email.toLowerCase().trim();
 
-        // 1. Check Admin Login
+        // 2. Check if input is a Phone Number passed in email field
+        if (/^\+?[0-9]{10,12}$/.test(emailLower.replace(/\s+/g, ''))) {
+          const cleanPhone = emailLower.replace(/[^0-9]/g, '');
+          return {
+            id: `phone-${cleanPhone.slice(-10)}`,
+            name: `Customer (${cleanPhone.slice(-10)})`,
+            email: `${cleanPhone.slice(-10)}@delabags.com`,
+            role: 'CUSTOMER',
+          };
+        }
+
+        // 3. Check Admin Login
         if (emailLower === ADMIN_EMAIL || emailLower === ADMIN_EMAIL_ALT) {
           const isPassValid =
             credentials.password === 'saadansari9' ||
@@ -43,7 +68,7 @@ export const authOptions: NextAuthOptions = {
           }
         }
 
-        // 2. Customer Email Login
+        // 4. Customer Email Login
         const rawName = emailLower.split('@')[0].replace(/[._-]/g, ' ');
         const formattedName = rawName.replace(/\b\w/g, (char) => char.toUpperCase());
 

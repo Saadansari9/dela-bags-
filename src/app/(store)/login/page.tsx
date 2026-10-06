@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, Loader2, Phone, Mail, CheckCircle2, ShieldCheck } from 'lucide-react';
 
 function GoogleIcon() {
   return (
@@ -36,15 +36,67 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') || '/';
-  
+
+  const [authMethod, setAuthMethod] = useState<'phone' | 'email'>('phone');
+
+  // Phone OTP States
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [otpSent, setOtpSent] = useState(false);
+  const [otp, setOtp] = useState('');
+  const [otpLoading, setOtpLoading] = useState(false);
+
+  // Email States
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [infoMessage, setInfoMessage] = useState('');
+
+  // 1. Send OTP Handler
+  const handleSendOtp = (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    const cleanPhone = phoneNumber.replace(/[^0-9]/g, '');
+    if (cleanPhone.length < 10) {
+      setError('Please enter a valid 10-digit mobile number.');
+      return;
+    }
+    setOtpLoading(true);
+    setTimeout(() => {
+      setOtpLoading(false);
+      setOtpSent(true);
+      setInfoMessage(`OTP sent to +91 ${cleanPhone.slice(-10)}. Use demo OTP: 1234`);
+    }, 800);
+  };
+
+  // 2. Verify OTP & Sign In Handler
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    if (!otp.trim()) {
+      setError('Please enter the OTP sent to your phone.');
+      return;
+    }
+    setOtpLoading(true);
+    const cleanPhone = phoneNumber.replace(/[^0-9]/g, '');
+    const result = await signIn('credentials', {
+      phone: cleanPhone,
+      redirect: false,
+    });
+    setOtpLoading(false);
+    if (result?.error) {
+      setError('Verification failed. Please try again.');
+    } else {
+      router.push(callbackUrl);
+      router.refresh();
+    }
+  };
+
+  // 3. Email & Password Login Handler
+  const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
@@ -62,33 +114,40 @@ function LoginForm() {
     }
   };
 
-  const handleNativeGoogleSignIn = () => {
+  // 4. Google OAuth Trigger
+  const handleGoogleSignIn = () => {
     setGoogleLoading(true);
     setError('');
-    // Triggers native browser redirect to accounts.google.com
     signIn('google', { callbackUrl });
   };
 
   return (
-    <div className="w-full max-w-md bg-white p-8 shadow-sm border">
-      <div className="text-center mb-8">
-        <h1 className="font-heading text-3xl font-bold">Welcome Back</h1>
-        <p className="text-muted-foreground mt-2">Sign in to your DELA BAGS account</p>
+    <div className="w-full max-w-md bg-white p-8 border border-neutral-200/80 shadow-xs">
+      <div className="text-center mb-6">
+        <h1 className="font-heading text-2xl font-bold tracking-tight">Welcome Back</h1>
+        <p className="text-xs text-neutral-500 mt-1 uppercase tracking-widest">Sign in to your DELA BAGS account</p>
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6 text-sm">
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-none mb-6 text-xs font-medium">
           {error}
         </div>
       )}
 
-      {/* Official Google OAuth Trigger Button */}
+      {infoMessage && (
+        <div className="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-none mb-6 text-xs flex items-center gap-2">
+          <CheckCircle2 className="h-4 w-4 shrink-0 text-blue-600" />
+          <span>{infoMessage}</span>
+        </div>
+      )}
+
+      {/* 🟢 1. Google / Gmail Sign In Button */}
       <Button
         type="button"
         variant="outline"
-        onClick={handleNativeGoogleSignIn}
+        onClick={handleGoogleSignIn}
         disabled={googleLoading}
-        className="w-full border-neutral-300 hover:bg-neutral-50 h-12 text-sm font-semibold flex items-center justify-center rounded-none mb-6 transition-all"
+        className="w-full border-neutral-300 hover:bg-neutral-50 h-12 text-xs font-bold uppercase tracking-wider flex items-center justify-center rounded-none mb-6 transition-all"
       >
         {googleLoading ? (
           <>
@@ -96,7 +155,7 @@ function LoginForm() {
           </>
         ) : (
           <>
-            <GoogleIcon /> Continue with Google
+            <GoogleIcon /> Continue with Google / Gmail
           </>
         )}
       </Button>
@@ -105,64 +164,204 @@ function LoginForm() {
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-neutral-200" />
         </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-white px-3 text-muted-foreground font-medium">Or sign in with email</span>
+        <div className="relative flex justify-center text-[10px] uppercase tracking-widest font-bold">
+          <span className="bg-white px-3 text-neutral-400">Or Select Login Method</span>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-5">
-        <div className="space-y-2">
-          <Label htmlFor="email">Email address</Label>
-          <Input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@example.com"
-            required
-            autoComplete="email"
-          />
-        </div>
-
-        <div className="space-y-2">
-          <div className="flex justify-between items-center">
-            <Label htmlFor="password">Password</Label>
-            <Link href="/forgot-password" className="text-xs text-muted-foreground hover:text-black underline underline-offset-2">
-              Forgot password?
-            </Link>
-          </div>
-          <div className="relative">
-            <Input
-              id="password"
-              type={showPassword ? 'text' : 'password'}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              required
-              autoComplete="current-password"
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-black"
-            >
-              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-            </button>
-          </div>
-        </div>
-
-        <Button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-black text-white hover:bg-neutral-800 rounded-none h-12 text-base font-bold"
+      {/* 🟢 2. Login Method Tabs (Phone vs Email) */}
+      <div className="grid grid-cols-2 gap-2 mb-6 bg-neutral-100 p-1 border border-neutral-200">
+        <button
+          type="button"
+          onClick={() => {
+            setAuthMethod('phone');
+            setError('');
+            setInfoMessage('');
+          }}
+          className={`py-2.5 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all ${
+            authMethod === 'phone'
+              ? 'bg-black text-white shadow-xs'
+              : 'text-neutral-600 hover:text-black'
+          }`}
         >
-          {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Signing in...</> : 'SIGN IN'}
-        </Button>
-      </form>
+          <Phone className="h-3.5 w-3.5" /> Mobile Number
+        </button>
 
-      <p className="mt-6 text-center text-sm text-muted-foreground">
+        <button
+          type="button"
+          onClick={() => {
+            setAuthMethod('email');
+            setError('');
+            setInfoMessage('');
+          }}
+          className={`py-2.5 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all ${
+            authMethod === 'email'
+              ? 'bg-black text-white shadow-xs'
+              : 'text-neutral-600 hover:text-black'
+          }`}
+        >
+          <Mail className="h-3.5 w-3.5" /> Email Address
+        </button>
+      </div>
+
+      {/* 📱 Mobile Number Login Tab */}
+      {authMethod === 'phone' ? (
+        <div className="space-y-4">
+          {!otpSent ? (
+            <form onSubmit={handleSendOtp} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="phoneNumber" className="text-xs font-bold uppercase tracking-wider">
+                  Mobile Number
+                </Label>
+                <div className="flex">
+                  <span className="inline-flex items-center px-3 border border-r-0 border-input bg-neutral-100 text-xs font-bold text-neutral-600">
+                    +91
+                  </span>
+                  <Input
+                    id="phoneNumber"
+                    type="tel"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    placeholder="9876543210"
+                    maxLength={10}
+                    required
+                    className="rounded-none border-l-0 text-sm tracking-widest font-mono"
+                  />
+                </div>
+              </div>
+
+              <Button
+                type="submit"
+                disabled={otpLoading}
+                className="w-full bg-black text-white hover:bg-neutral-800 rounded-none h-12 text-xs font-bold uppercase tracking-widest"
+              >
+                {otpLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Sending OTP...
+                  </>
+                ) : (
+                  'SEND OTP TO MOBILE'
+                )}
+              </Button>
+            </form>
+          ) : (
+            <form onSubmit={handleVerifyOtp} className="space-y-4">
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <Label htmlFor="otp" className="text-xs font-bold uppercase tracking-wider">
+                    Enter OTP
+                  </Label>
+                  <button
+                    type="button"
+                    onClick={() => setOtpSent(false)}
+                    className="text-xs text-neutral-500 hover:text-black underline underline-offset-2"
+                  >
+                    Change Number
+                  </button>
+                </div>
+                <Input
+                  id="otp"
+                  type="text"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  placeholder="Enter 4-digit OTP (e.g. 1234)"
+                  maxLength={6}
+                  required
+                  className="rounded-none text-center tracking-[0.5em] font-mono text-lg font-bold"
+                />
+              </div>
+
+              <Button
+                type="submit"
+                disabled={otpLoading}
+                className="w-full bg-black text-white hover:bg-neutral-800 rounded-none h-12 text-xs font-bold uppercase tracking-widest"
+              >
+                {otpLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Verifying...
+                  </>
+                ) : (
+                  'VERIFY OTP & LOGIN'
+                )}
+              </Button>
+
+              <p className="text-[11px] text-neutral-400 text-center flex items-center justify-center gap-1">
+                <ShieldCheck className="h-3.5 w-3.5 text-green-600" /> Instant SMS Security
+              </p>
+            </form>
+          )}
+        </div>
+      ) : (
+        /* ✉️ Email Login Tab */
+        <form onSubmit={handleEmailSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="email" className="text-xs font-bold uppercase tracking-wider">
+              Email Address
+            </Label>
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              required
+              autoComplete="email"
+              className="rounded-none"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <Label htmlFor="password" className="text-xs font-bold uppercase tracking-wider">
+                Password
+              </Label>
+              <Link
+                href="/forgot-password"
+                className="text-xs text-neutral-500 hover:text-black underline underline-offset-2"
+              >
+                Forgot password?
+              </Link>
+            </div>
+            <div className="relative">
+              <Input
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                required
+                autoComplete="current-password"
+                className="rounded-none pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-black"
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
+          </div>
+
+          <Button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-black text-white hover:bg-neutral-800 rounded-none h-12 text-xs font-bold uppercase tracking-widest"
+          >
+            {loading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Signing in...
+              </>
+            ) : (
+              'SIGN IN WITH EMAIL'
+            )}
+          </Button>
+        </form>
+      )}
+
+      <p className="mt-6 text-center text-xs text-neutral-500">
         Don&apos;t have an account?{' '}
-        <Link href="/register" className="font-medium text-black underline underline-offset-4">
+        <Link href="/register" className="font-bold text-black underline underline-offset-4 uppercase tracking-wider">
           Create one
         </Link>
       </p>
@@ -172,10 +371,10 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <div className="min-h-[80vh] flex items-center justify-center bg-neutral-50 px-4">
+    <div className="min-h-[80vh] flex items-center justify-center bg-[#FAF9F6] px-4 py-12">
       <Suspense
         fallback={
-          <div className="w-full max-w-md bg-white p-8 shadow-sm border text-center">
+          <div className="w-full max-w-md bg-white p-8 border text-center">
             <div className="h-8 w-8 border-4 border-black border-t-transparent rounded-full animate-spin mx-auto" />
           </div>
         }
