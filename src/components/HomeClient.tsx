@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { useCart } from "@/store/useCart";
 import { useWishlist } from "@/store/useWishlist";
+import { useProductStore } from "@/store/useProductStore";
 import type { Product } from "@/lib/data/products";
 
 const HERO_SLIDES = [
@@ -103,6 +104,9 @@ export default function HomeClient({
   const [mounted, setMounted] = useState(false);
   const { addItem } = useCart();
   const wishlist = useWishlist();
+  const productStore = useProductStore();
+
+  const activeBestsellers = productStore.getFilteredProducts(bestsellers);
 
   useEffect(() => {
     setMounted(true);
@@ -297,7 +301,7 @@ export default function HomeClient({
           </div>
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            {bestsellers.slice(0, 4).map((product) => {
+            {activeBestsellers.slice(0, 4).map((product) => {
               const discount = product.originalPrice
                 ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
                 : 0;

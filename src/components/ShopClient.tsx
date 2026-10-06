@@ -7,6 +7,7 @@ import { Star, Search, Filter, X, ArrowUpDown, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import type { Product, Category } from '@/lib/data/products';
+import { useProductStore } from '@/store/useProductStore';
 
 export default function ShopClient({
   initialProducts,
@@ -25,8 +26,14 @@ export default function ShopClient({
   const [maxPrice, setMaxPrice] = useState<number>(5000);
   const [onlyInStock, setOnlyInStock] = useState(false);
 
+  const productStore = useProductStore();
+
+  const activeProducts = useMemo(() => {
+    return productStore.getFilteredProducts(initialProducts);
+  }, [initialProducts, productStore.deletedIds]);
+
   const filteredProducts = useMemo(() => {
-    return initialProducts.filter((p) => {
+    return activeProducts.filter((p) => {
       // Category filter
       if (selectedCategory && p.categorySlug !== selectedCategory) return false;
 
@@ -54,7 +61,7 @@ export default function ShopClient({
       if (sortOption === 'bestseller') return (b.bestseller ? 1 : 0) - (a.bestseller ? 1 : 0);
       return 0;
     });
-  }, [initialProducts, selectedCategory, maxPrice, onlyInStock, searchQuery, sortOption]);
+  }, [activeProducts, selectedCategory, maxPrice, onlyInStock, searchQuery, sortOption]);
 
   const clearFilters = () => {
     setSearchQuery('');
