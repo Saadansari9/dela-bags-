@@ -12,6 +12,7 @@ import { useCart } from "@/store/useCart";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { loadRazorpayScript, type RazorpayOptions } from "@/lib/razorpay";
+import { LocationPickerMap } from "@/components/LocationPickerMap";
 
 export default function CheckoutPage() {
   const [mounted, setMounted] = useState(false);
@@ -28,6 +29,8 @@ export default function CheckoutPage() {
     state: 'Maharashtra',
     pincode: '',
     phone: '',
+    lat: null as number | null,
+    lng: null as number | null,
   });
 
   const cart = useCart();
@@ -48,6 +51,18 @@ export default function CheckoutPage() {
     setForm({ ...form, [e.target.id]: e.target.value });
   };
 
+  const handleLocationSelect = (loc: { address: string; city: string; state: string; pincode: string; lat: number; lng: number }) => {
+    setForm((prev) => ({
+      ...prev,
+      address: loc.address || prev.address,
+      city: loc.city || prev.city,
+      state: loc.state || prev.state,
+      pincode: loc.pincode || prev.pincode,
+      lat: loc.lat,
+      lng: loc.lng,
+    }));
+  };
+
   const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -56,12 +71,13 @@ export default function CheckoutPage() {
     const randomNum = Math.floor(10000 + Math.random() * 90000);
     const orderId = `DELA-${randomNum}`;
     const fullName = `${form.firstName} ${form.lastName}`.trim() || 'Customer';
+    const gpsQuery = form.lat && form.lng ? `&lat=${form.lat}&lng=${form.lng}` : '';
 
     // 1. CASH ON DELIVERY (COD) FLOW
     if (paymentMethod === 'cod') {
       setTimeout(() => {
         cart.clearCart();
-        router.push(`/orders/${orderId}?status=COD_PLACED`);
+        router.push(`/orders/${orderId}?status=COD_PLACED${gpsQuery}`);
       }, 1200);
       return;
     }
@@ -113,7 +129,7 @@ export default function CheckoutPage() {
         handler: function (response) {
           console.log('Razorpay Payment Success:', response);
           cart.clearCart();
-          router.push(`/orders/${orderId}?pay_id=${response.razorpay_payment_id}&status=PAID_SUCCESS`);
+          router.push(`/orders/${orderId}?pay_id=${response.razorpay_payment_id}&status=PAID_SUCCESS${gpsQuery}`);
         },
       };
 
@@ -223,7 +239,15 @@ export default function CheckoutPage() {
 
             {/* Shipping Address */}
             <div>
-              <h2 className="text-xl font-bold mb-4">Shipping Address</h2>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-bold">Shipping Address</h2>
+              </div>
+
+              {/* GPS Live Map Auto-Fill Component */}
+              <div className="mb-6">
+                <LocationPickerMap onLocationSelect={handleLocationSelect} />
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <Label htmlFor="firstName">First name</Label>

@@ -212,6 +212,32 @@ export default function TrackOrderPage() {
               </div>
             </div>
 
+            {/* Live Map Tracking View */}
+            <div className="space-y-2">
+              <div className="flex justify-between items-center text-xs">
+                <span className="font-bold uppercase tracking-wider text-neutral-600 flex items-center gap-1">
+                  <MapPin className="h-4 w-4 text-amber-800" /> Live Transit & Delivery Location Map
+                </span>
+                <span className="text-[10px] bg-amber-50 text-amber-800 border border-amber-200 px-2 py-0.5 font-bold uppercase font-mono">
+                  📍 Active Transit GPS
+                </span>
+              </div>
+              <div className="relative aspect-[21/9] w-full border border-neutral-300 overflow-hidden bg-neutral-100">
+                <iframe
+                  title="Live Order Tracking Map Pin"
+                  width="100%"
+                  height="100%"
+                  frameBorder="0"
+                  scrolling="no"
+                  src="https://www.openstreetmap.org/export/embed.html?bbox=72.8093%2C18.9596%2C72.8293%2C18.9796&layer=mapnik&marker=18.9696%2C72.8193"
+                  className="w-full h-full"
+                />
+                <div className="absolute bottom-2 left-2 bg-black text-white text-[10px] font-mono px-2 py-1 uppercase tracking-widest font-bold">
+                  📍 DELA Live Express Transit Hub: Mumbai Central Hub
+                </div>
+              </div>
+            </div>
+
             {/* Visual Timeline Stepper */}
             <div className="space-y-4">
               <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-neutral-400 border-b pb-2">

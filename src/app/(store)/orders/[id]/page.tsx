@@ -2,11 +2,17 @@
 
 import { use } from 'react';
 import Link from 'next/link';
-import { Package, CheckCircle2, Truck, Clock, Printer, MapPin, ArrowLeft } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
+import { Package, CheckCircle2, Truck, Clock, Printer, MapPin, ArrowLeft, Navigation } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function OrderDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
+  const searchParams = useSearchParams();
+  const latParam = searchParams.get('lat');
+  const lngParam = searchParams.get('lng');
+  const lat = latParam ? parseFloat(latParam) : 18.9696;
+  const lng = lngParam ? parseFloat(lngParam) : 72.8193;
 
   const order = {
     id: id.toUpperCase(),
@@ -109,17 +115,35 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
 
       {/* Order Details Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-        {/* Shipping Address */}
-        <div className="border p-6 bg-white space-y-2 text-sm">
-          <h3 className="font-bold text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-1">
-            <MapPin className="h-4 w-4" /> Shipping Address
-          </h3>
-          <p className="font-bold">{order.shippingAddress.name}</p>
-          <p className="text-muted-foreground">{order.shippingAddress.street}</p>
-          <p className="text-muted-foreground">
-            {order.shippingAddress.city}, {order.shippingAddress.state} - {order.shippingAddress.pincode}
-          </p>
-          <p className="text-muted-foreground">Phone: {order.shippingAddress.phone}</p>
+        {/* Shipping Address & Map */}
+        <div className="border p-6 bg-white space-y-3 text-sm flex flex-col justify-between">
+          <div>
+            <h3 className="font-bold text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-1 mb-2">
+              <MapPin className="h-4 w-4 text-emerald-600" /> Delivery Location Pin
+            </h3>
+            <p className="font-bold">{order.shippingAddress.name}</p>
+            <p className="text-muted-foreground">{order.shippingAddress.street}</p>
+            <p className="text-muted-foreground">
+              {order.shippingAddress.city}, {order.shippingAddress.state} - {order.shippingAddress.pincode}
+            </p>
+            <p className="text-muted-foreground text-xs mt-1">Phone: {order.shippingAddress.phone}</p>
+          </div>
+
+          {/* Interactive Map Embed */}
+          <div className="relative aspect-[16/9] w-full border border-neutral-300 overflow-hidden bg-neutral-100 rounded-none mt-2">
+            <iframe
+              title="Order Delivery Pin Map"
+              width="100%"
+              height="100%"
+              frameBorder="0"
+              scrolling="no"
+              src={`https://www.openstreetmap.org/export/embed.html?bbox=${lng - 0.01}%2C${lat - 0.01}%2C${lng + 0.01}%2C${lat + 0.01}&layer=mapnik&marker=${lat}%2C${lng}`}
+              className="w-full h-full"
+            />
+            <div className="absolute bottom-1 left-1 bg-black text-white text-[9px] font-mono px-1.5 py-0.5 uppercase tracking-widest font-bold">
+              📍 Destination Pin
+            </div>
+          </div>
         </div>
 
         {/* Payment Details */}
