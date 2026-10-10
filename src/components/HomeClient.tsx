@@ -30,6 +30,7 @@ const HERO_SLIDES = [
     highlight: "Style.",
     subtitle: "Discover timeless handbags crafted with precision, premium vegan leather, and modern Indian craftsmanship.",
     image: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=2070&auto=format&fit=crop",
+    alt: "Fashion model posing outdoors with a handcrafted tan leather shoulder bag",
     badge: "✨ Autumn / Winter 2026 Collection",
     primaryCta: "SHOP WOMEN",
     primaryLink: "/shop?category=ladies-handbags",
@@ -41,6 +42,7 @@ const HERO_SLIDES = [
     highlight: "Executives.",
     subtitle: "Explore rugged crossbody bags, leather laptop sleeves, and spacious travel duffels for modern men.",
     image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&w=2070&auto=format&fit=crop",
+    alt: "Executive male model carrying a brown leather crossbody laptop bag",
     badge: "🔥 Men's Luxury Edition",
     primaryCta: "SHOP MEN'S BAGS",
     primaryLink: "/shop?category=mens-bags",
@@ -52,6 +54,7 @@ const HERO_SLIDES = [
     highlight: "Chic.",
     subtitle: "Everyday sling bags and minimalist shoulder totes designed to keep your essentials organized in style.",
     image: "https://images.unsplash.com/photo-1591561954557-26941169b49e?q=80&w=2070&auto=format&fit=crop",
+    alt: "Model wearing a minimalist beige leather sling bag",
     badge: "⚡ Trending Slings & Totes",
     primaryCta: "SHOP SLING BAGS",
     primaryLink: "/shop?category=sling-bags",
@@ -61,12 +64,12 @@ const HERO_SLIDES = [
 ];
 
 const CATEGORIES = [
-  { name: "Handbags", slug: "ladies-handbags", image: "https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=1000&auto=format&fit=crop" },
-  { name: "Sling Bags", slug: "sling-bags", image: "https://images.unsplash.com/photo-1591561954557-26941169b49e?q=80&w=1000&auto=format&fit=crop" },
-  { name: "Tote Bags", slug: "tote-bags", image: "https://images.unsplash.com/photo-1622560480605-d83c853bc5c3?q=80&w=1000&auto=format&fit=crop" },
-  { name: "Shoulder Bags", slug: "shoulder-bags", image: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=1000&auto=format&fit=crop" },
-  { name: "Men's Bags", slug: "mens-bags", image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&w=1000&auto=format&fit=crop" },
-  { name: "Travel Bags", slug: "travel-bags", image: "https://images.unsplash.com/photo-1553531384-411a4ff74811?q=80&w=1000&auto=format&fit=crop" },
+  { name: "Handbags", slug: "ladies-handbags", image: "https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=1000&auto=format&fit=crop", alt: "Classic brown vegan leather handbag on display" },
+  { name: "Sling Bags", slug: "sling-bags", image: "https://images.unsplash.com/photo-1591561954557-26941169b49e?q=80&w=1000&auto=format&fit=crop", alt: "Model wearing a minimalist tan leather sling bag with adjustable strap" },
+  { name: "Tote Bags", slug: "tote-bags", image: "https://images.unsplash.com/photo-1622560480605-d83c853bc5c3?q=80&w=1000&auto=format&fit=crop", alt: "Woman carrying a spacious cotton canvas everyday tote bag" },
+  { name: "Shoulder Bags", slug: "shoulder-bags", image: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=1000&auto=format&fit=crop", alt: "Beige leather shoulder bag held by a fashion model" },
+  { name: "Men's Bags", slug: "mens-bags", image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&w=1000&auto=format&fit=crop", alt: "Male model carrying a rugged black ballistic nylon crossbody bag" },
+  { name: "Travel Bags", slug: "travel-bags", image: "https://images.unsplash.com/photo-1553531384-411a4ff74811?q=80&w=1000&auto=format&fit=crop", alt: "Executive leather travel duffel bag with shoe compartment" },
 ];
 
 export default function HomeClient({
@@ -247,7 +250,7 @@ export default function HomeClient({
                 <div className="relative w-full aspect-[4/5] overflow-hidden mb-3 bg-neutral-100 border border-neutral-200/80 transition-all duration-500 group-hover:border-black group-hover:-translate-y-1">
                   <Image
                     src={category.image}
-                    alt={category.name}
+                    alt={category.alt}
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-700"
                   />
@@ -467,13 +470,13 @@ export default function HomeClient({
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
             {[
-              "https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=800&auto=format&fit=crop",
-              "https://images.unsplash.com/photo-1591561954557-26941169b49e?q=80&w=800&auto=format&fit=crop",
-              "https://images.unsplash.com/photo-1622560480605-d83c853bc5c3?q=80&w=800&auto=format&fit=crop",
-              "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=800&auto=format&fit=crop",
-            ].map((src, i) => (
+              { src: "https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=800&auto=format&fit=crop", alt: "DELA BAGS customer styling a classic leather tote bag outdoors" },
+              { src: "https://images.unsplash.com/photo-1591561954557-26941169b49e?q=80&w=800&auto=format&fit=crop", alt: "Model carrying a chic minimalist sling bag outdoors" },
+              { src: "https://images.unsplash.com/photo-1622560480605-d83c853bc5c3?q=80&w=800&auto=format&fit=crop", alt: "Fashion blogger featuring a cotton canvas everyday tote bag" },
+              { src: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=800&auto=format&fit=crop", alt: "Model posing with a beige leather shoulder handbag" },
+            ].map((item, i) => (
               <div key={i} className="group relative aspect-square overflow-hidden bg-neutral-100 border border-neutral-200">
-                <Image src={src} alt={`DELA Style ${i + 1}`} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
+                <Image src={item.src} alt={item.alt} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                   <Camera className="h-7 w-7 text-white" />
                 </div>
