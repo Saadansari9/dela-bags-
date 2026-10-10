@@ -14,13 +14,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const product = await getProductBySlug(slug);
   if (!product) return { title: 'Product Not Found | DELA BAGS' };
+  const desc = `${product.name} - ${product.description.slice(0, 140)}... Handcrafted in premium materials with custom monogramming options.`;
   return {
-    title: `${product.name} | DELA BAGS`,
-    description: product.description.slice(0, 160),
+    title: `${product.name} - ${product.category} | DELA BAGS`,
+    description: desc,
     openGraph: {
-      title: product.name,
-      description: product.description.slice(0, 160),
-      images: [{ url: product.images[0] }],
+      title: `${product.name} - ${product.category} | DELA BAGS`,
+      description: desc,
+      images: [{ url: product.images[0], width: 1200, height: 630, alt: product.name }],
     },
   };
 }
