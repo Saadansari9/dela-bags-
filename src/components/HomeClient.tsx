@@ -64,12 +64,74 @@ const HERO_SLIDES = [
 ];
 
 const CATEGORIES = [
-  { name: "Handbags", slug: "ladies-handbags", image: "https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=1000&auto=format&fit=crop", alt: "Classic brown vegan leather handbag on display" },
-  { name: "Sling Bags", slug: "sling-bags", image: "https://images.unsplash.com/photo-1591561954557-26941169b49e?q=80&w=1000&auto=format&fit=crop", alt: "Model wearing a minimalist tan leather sling bag with adjustable strap" },
-  { name: "Tote Bags", slug: "tote-bags", image: "https://images.unsplash.com/photo-1622560480605-d83c853bc5c3?q=80&w=1000&auto=format&fit=crop", alt: "Woman carrying a spacious cotton canvas everyday tote bag" },
-  { name: "Shoulder Bags", slug: "shoulder-bags", image: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=1000&auto=format&fit=crop", alt: "Beige leather shoulder bag held by a fashion model" },
-  { name: "Men's Bags", slug: "mens-bags", image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&w=1000&auto=format&fit=crop", alt: "Male model carrying a rugged black ballistic nylon crossbody bag" },
-  { name: "Travel Bags", slug: "travel-bags", image: "https://images.unsplash.com/photo-1553531384-411a4ff74811?q=80&w=1000&auto=format&fit=crop", alt: "Executive leather travel duffel bag with shoe compartment" },
+  {
+    name: "Luxury Handbags",
+    slug: "ladies-handbags",
+    group: "women",
+    subtitle: "Timeless Vegan Leather Totes & Top-Handles",
+    tag: "🔥 BESTSELLER",
+    count: "18+ Styles",
+    startingPrice: "₹1,899",
+    image: "https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=1200&auto=format&fit=crop",
+    alt: "Classic brown vegan leather handbag on display",
+    featured: true,
+  },
+  {
+    name: "Men's Executive Bags",
+    slug: "mens-bags",
+    group: "men",
+    subtitle: "Rugged Crossbody, Messenger & Laptop Sleeves",
+    tag: "⚡ EXECUTIVE CHOICE",
+    count: "15+ Styles",
+    startingPrice: "₹1,999",
+    image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&w=1200&auto=format&fit=crop",
+    alt: "Male model carrying a rugged black ballistic nylon crossbody bag",
+    featured: true,
+  },
+  {
+    name: "Chic Sling Bags",
+    slug: "sling-bags",
+    group: "women",
+    subtitle: "Lightweight Crossbody & Hands-Free Slings",
+    tag: "✨ TRENDING NOW",
+    count: "14+ Styles",
+    startingPrice: "₹1,299",
+    image: "https://images.unsplash.com/photo-1591561954557-26941169b49e?q=80&w=1000&auto=format&fit=crop",
+    alt: "Model wearing a minimalist tan leather sling bag with adjustable strap",
+  },
+  {
+    name: "Spacious Tote Bags",
+    slug: "tote-bags",
+    group: "travel",
+    subtitle: "Workplace Canvas & Everyday Shoulder Totes",
+    tag: "🌟 EVERYDAY ESSENTIAL",
+    count: "12+ Styles",
+    startingPrice: "₹1,499",
+    image: "https://images.unsplash.com/photo-1622560480605-d83c853bc5c3?q=80&w=1000&auto=format&fit=crop",
+    alt: "Woman carrying a spacious cotton canvas everyday tote bag",
+  },
+  {
+    name: "Shoulder Handbags",
+    slug: "shoulder-bags",
+    group: "women",
+    subtitle: "Minimalist Underarm & Evening Shoulder Bags",
+    tag: "💫 NEW COLLECTION",
+    count: "10+ Styles",
+    startingPrice: "₹1,699",
+    image: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=1000&auto=format&fit=crop",
+    alt: "Beige leather shoulder bag held by a fashion model",
+  },
+  {
+    name: "Travel Duffel Bags",
+    slug: "travel-bags",
+    group: "travel",
+    subtitle: "Weekender Holdalls & Leather Travel Duffels",
+    tag: "✈️ PAN-INDIA EXPRESS",
+    count: "8+ Styles",
+    startingPrice: "₹2,499",
+    image: "https://images.unsplash.com/photo-1553531384-411a4ff74811?q=80&w=1000&auto=format&fit=crop",
+    alt: "Executive leather travel duffel bag with shoe compartment",
+  },
 ];
 
 export default function HomeClient({
@@ -235,32 +297,118 @@ export default function HomeClient({
         </div>
       </section>
 
-      {/* 3. FEATURED CATEGORIES GRID */}
-      <section className="py-16 bg-white border-y border-neutral-200/60">
+      {/* 3. FEATURED CATEGORIES LUXURY BENTO GRID */}
+      <section className="py-20 bg-white border-y border-neutral-200">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-xl mx-auto mb-12">
-            <span className="text-[11px] uppercase tracking-[0.25em] text-neutral-500 font-semibold">Collections</span>
-            <h2 className="font-heading text-3xl sm:text-4xl font-bold text-neutral-900 mt-1">Shop By Category</h2>
-            <div className="h-0.5 w-10 bg-neutral-900 mx-auto mt-3" />
+          {/* Header & Subtitle */}
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
+            <div>
+              <div className="inline-flex items-center gap-2 px-2.5 py-1 bg-neutral-100 text-neutral-800 text-[10px] font-mono font-bold uppercase tracking-widest border border-neutral-300 mb-2">
+                ✨ Curated Range
+              </div>
+              <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-neutral-900 tracking-tight">
+                Shop By <span className="font-serif italic font-normal text-stone-600">Category</span>
+              </h2>
+            </div>
+            <Link
+              href="/shop"
+              className="mt-4 md:mt-0 flex items-center gap-2 text-xs font-bold text-black hover:opacity-70 transition-opacity uppercase tracking-[0.2em] border-b-2 border-black pb-1"
+            >
+              BROWSE ALL 50+ DESIGNS <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6">
-            {CATEGORIES.map((category) => (
-              <Link href={`/shop?category=${category.slug}`} key={category.name} className="group flex flex-col items-center text-center">
-                <div className="relative w-full aspect-[4/5] overflow-hidden mb-3 bg-neutral-100 border border-neutral-200/80 transition-all duration-500 group-hover:border-black group-hover:-translate-y-1">
+          {/* Luxury Bento Grid */}
+          <div className="space-y-6">
+            {/* Top Row: 2 Large Hero Featured Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {CATEGORIES.filter((c) => c.featured).map((cat) => (
+                <Link
+                  key={cat.slug}
+                  href={`/shop?category=${cat.slug}`}
+                  className="group relative aspect-[16/10] sm:aspect-[16/9] overflow-hidden bg-stone-900 border border-neutral-200 shadow-sm transition-all duration-500 hover:shadow-xl hover:border-black"
+                >
                   <Image
-                    src={category.image}
-                    alt={category.alt}
+                    src={cat.image}
+                    alt={cat.alt}
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-700"
+                    className="object-cover group-hover:scale-108 transition-transform duration-1000 ease-out opacity-85"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
-                  <span className="absolute bottom-3 left-0 right-0 text-[11px] font-semibold text-white uppercase tracking-wider">
-                    {category.name}
-                  </span>
-                </div>
-              </Link>
-            ))}
+                  {/* Subtle Dark Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+
+                  {/* Top Badges */}
+                  <div className="absolute top-4 left-4 right-4 flex justify-between items-center z-10">
+                    <span className="bg-white/90 backdrop-blur-md text-black text-[10px] font-mono font-bold uppercase tracking-widest px-2.5 py-1 border border-white">
+                      {cat.tag}
+                    </span>
+                    <span className="bg-black/60 backdrop-blur-md text-white text-[10px] font-mono font-bold uppercase tracking-widest px-2.5 py-1 border border-white/20">
+                      {cat.count}
+                    </span>
+                  </div>
+
+                  {/* Bottom Content */}
+                  <div className="absolute bottom-0 inset-x-0 p-6 sm:p-8 space-y-2 z-10 transition-transform duration-300">
+                    <span className="text-amber-300 text-[10px] font-mono font-bold uppercase tracking-widest">
+                      From {cat.startingPrice}
+                    </span>
+                    <h3 className="font-heading text-2xl sm:text-3xl font-bold text-white uppercase tracking-tight">
+                      {cat.name}
+                    </h3>
+                    <p className="text-xs text-neutral-300 font-light max-w-sm line-clamp-1">
+                      {cat.subtitle}
+                    </p>
+
+                    <div className="pt-2 flex items-center gap-2 text-xs font-bold text-white uppercase tracking-[0.2em] group-hover:text-amber-300 transition-colors">
+                      <span>EXPLORE COLLECTION</span>
+                      <ArrowRight className="h-4 w-4 group-hover:translate-x-1.5 transition-transform" />
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+
+            {/* Bottom Row: 4 Medium Category Cards */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+              {CATEGORIES.filter((c) => !c.featured).map((cat) => (
+                <Link
+                  key={cat.slug}
+                  href={`/shop?category=${cat.slug}`}
+                  className="group relative aspect-[4/5] overflow-hidden bg-neutral-900 border border-neutral-200/80 transition-all duration-500 hover:border-black hover:shadow-lg"
+                >
+                  <Image
+                    src={cat.image}
+                    alt={cat.alt}
+                    fill
+                    className="object-cover group-hover:scale-108 transition-transform duration-700 opacity-85"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+
+                  {/* Top Tag */}
+                  <div className="absolute top-3 left-3 z-10">
+                    <span className="bg-black/60 backdrop-blur-md text-white text-[9px] font-mono font-bold uppercase tracking-widest px-2 py-0.5 border border-white/20">
+                      {cat.count}
+                    </span>
+                  </div>
+
+                  {/* Bottom Info */}
+                  <div className="absolute bottom-0 inset-x-0 p-4 space-y-1 z-10">
+                    <span className="text-amber-300 text-[9px] font-mono font-bold uppercase tracking-widest block">
+                      From {cat.startingPrice}
+                    </span>
+                    <h4 className="font-heading text-lg font-bold text-white uppercase tracking-wide">
+                      {cat.name}
+                    </h4>
+                    <p className="text-[11px] text-neutral-300 font-light line-clamp-1">
+                      {cat.subtitle}
+                    </p>
+                    <div className="pt-1 flex items-center text-[11px] font-bold text-white uppercase tracking-wider group-hover:text-amber-300 transition-colors">
+                      <span>SHOP NOW</span> <ArrowRight className="h-3 w-3 ml-1 group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </section>
