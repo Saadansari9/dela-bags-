@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { HelpCircle, ChevronDown, Search, MessageCircle, Phone, Mail, ShieldCheck } from 'lucide-react';
+import Script from 'next/script';
+import { HelpCircle, ChevronDown, Search, MessageCircle, Mail } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 
 interface FAQItem {
@@ -82,36 +83,57 @@ export default function FAQPage() {
       f.category.toLowerCase().includes(search.toLowerCase())
   );
 
+  // JSON-LD Structured Data Schema for FAQ
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: FAQS.map((faq) => ({
+      '@type': 'Question',
+      name: faq.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.answer,
+      },
+    })),
+  };
+
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 max-w-4xl">
+      {/* FAQ JSON-LD Structured Data */}
+      <Script
+        id="faq-jsonld"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+
       <div className="text-center max-w-2xl mx-auto mb-10">
-        <div className="h-12 w-12 bg-neutral-100 border rounded-full flex items-center justify-center mx-auto mb-4">
+        <div className="h-12 w-12 bg-neutral-100 border border-neutral-300 flex items-center justify-center mx-auto mb-4">
           <HelpCircle className="h-6 w-6 text-black" />
         </div>
-        <h1 className="font-heading text-3xl sm:text-4xl font-bold">Frequently Asked Questions</h1>
-        <p className="text-muted-foreground mt-2 text-sm">
+        <h1 className="font-heading text-3xl sm:text-4xl font-bold uppercase tracking-wider">Frequently Asked Questions</h1>
+        <p className="text-neutral-600 mt-2 text-xs font-light">
           Everything you need to know about DELA BAGS products, shipping, returns, and ordering.
         </p>
       </div>
 
       {/* Search Input */}
       <div className="relative max-w-lg mx-auto mb-10">
-        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
         <Input
           type="text"
           placeholder="Search questions (e.g. shipping, payment, returns)..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="pl-10 h-12 bg-white rounded-none border"
+          className="pl-10 h-12 bg-white rounded-none border-neutral-300 text-xs"
         />
       </div>
 
       {/* FAQ Accordion List */}
       <div className="space-y-4">
         {filteredFaqs.length === 0 ? (
-          <div className="text-center py-12 bg-white border">
-            <p className="text-muted-foreground">No questions found matching your search term.</p>
-            <button onClick={() => setSearch('')} className="mt-2 text-xs font-bold underline">
+          <div className="text-center py-12 bg-white border border-neutral-300">
+            <p className="text-xs text-neutral-500">No questions found matching your search term.</p>
+            <button onClick={() => setSearch('')} className="mt-2 text-xs font-bold uppercase underline">
               Clear Search
             </button>
           </div>
@@ -119,7 +141,7 @@ export default function FAQPage() {
           filteredFaqs.map((faq, index) => {
             const isOpen = openIndex === index;
             return (
-              <div key={index} className="border bg-white overflow-hidden transition-all">
+              <div key={index} className="border border-neutral-300 bg-white overflow-hidden transition-all">
                 <button
                   onClick={() => setOpenIndex(isOpen ? null : index)}
                   className="w-full p-5 text-left flex justify-between items-center gap-4 hover:bg-neutral-50 transition-colors"
@@ -128,7 +150,7 @@ export default function FAQPage() {
                     <span className="text-[10px] font-bold text-amber-800 uppercase tracking-widest block mb-1">
                       {faq.category}
                     </span>
-                    <h3 className="font-bold text-base text-neutral-900">{faq.question}</h3>
+                    <h3 className="font-bold text-sm text-neutral-900 font-heading uppercase">{faq.question}</h3>
                   </div>
                   <ChevronDown
                     className={`h-5 w-5 text-neutral-500 shrink-0 transition-transform duration-300 ${
@@ -138,7 +160,7 @@ export default function FAQPage() {
                 </button>
 
                 {isOpen && (
-                  <div className="px-5 pb-5 text-sm text-neutral-600 leading-relaxed border-t pt-4 bg-neutral-50/50">
+                  <div className="px-5 pb-5 text-xs text-neutral-600 leading-relaxed border-t border-neutral-100 pt-4 bg-[#FAF9F6] font-light">
                     {faq.answer}
                   </div>
                 )}
@@ -149,25 +171,25 @@ export default function FAQPage() {
       </div>
 
       {/* Still Have Questions Box */}
-      <div className="mt-16 bg-stone-950 text-white p-8 rounded-lg text-center space-y-4">
-        <h2 className="font-heading text-2xl font-bold">Still have questions?</h2>
-        <p className="text-stone-400 text-sm max-w-md mx-auto">
-          Can&apos;t find the answer you&apos;re looking for? Our customer support team is available Mon-Sat, 9:00 AM - 9:00 PM.
+      <div className="mt-16 bg-neutral-950 text-white p-8 border border-neutral-800 text-center space-y-4">
+        <h2 className="font-heading text-2xl font-bold uppercase">Still Have Questions?</h2>
+        <p className="text-neutral-400 text-xs max-w-md mx-auto font-light">
+          Can&apos;t find the answer you&apos;re looking for? Our atelier customer support team is available Mon-Sat, 9:00 AM - 9:00 PM IST.
         </p>
         <div className="flex flex-wrap justify-center gap-4 pt-2">
           <a
             href="https://wa.me/919930009639"
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-2 bg-[#25D366] text-black font-bold text-xs px-5 py-3 rounded hover:bg-[#20ba5a] transition-all"
+            className="inline-flex items-center gap-2 bg-[#25D366] text-black font-bold text-xs px-5 py-3 rounded-none hover:bg-[#20ba5a] transition-all uppercase tracking-wider"
           >
-            <MessageCircle className="h-4 w-4" /> WhatsApp Us (+91 99300 09639)
+            <MessageCircle className="h-4 w-4" /> WhatsApp Support (+91 99300 09639)
           </a>
           <Link
             href="/contact"
-            className="inline-flex items-center gap-2 bg-white text-black font-bold text-xs px-5 py-3 rounded hover:bg-neutral-200 transition-all"
+            className="inline-flex items-center gap-2 bg-white text-black font-bold text-xs px-5 py-3 rounded-none hover:bg-neutral-200 transition-all uppercase tracking-wider"
           >
-            <Mail className="h-4 w-4" /> Contact Support Team
+            <Mail className="h-4 w-4" /> Email Atelier Support
           </Link>
         </div>
       </div>

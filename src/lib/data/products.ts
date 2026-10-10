@@ -1,10 +1,6 @@
 // ============================================================
 // CENTRAL PRODUCT DATA SOURCE
 // ============================================================
-// This file acts as the data layer for products.
-// When you connect a PostgreSQL database, replace the exported
-// functions below with Prisma queries (see comments).
-// ============================================================
 
 export interface Category {
   name: string;
@@ -36,7 +32,55 @@ export interface Product {
 }
 
 // ============================================================
-// SAMPLE PRODUCTS — replace with Prisma DB calls when ready
+// HIGH-FASHION MODEL PHOTOSHOOT IMAGE PRESETS
+// ============================================================
+export const MODEL_PHOTOSHOOT_PRESETS = [
+  {
+    title: "Women's Leather Handbag Shoot",
+    category: "Ladies Handbags",
+    images: [
+      "https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?q=80&w=1200&auto=format&fit=crop",
+    ],
+  },
+  {
+    title: "Women's Sling & Crossbody Shoot",
+    category: "Sling Bags",
+    images: [
+      "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1591561954557-26941169b49e?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1598532163257-ae3c6b2524b6?q=80&w=1200&auto=format&fit=crop",
+    ],
+  },
+  {
+    title: "Everyday Tote Bag Model Shoot",
+    category: "Tote Bags",
+    images: [
+      "https://images.unsplash.com/photo-1622560480605-d83c853bc5c3?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=1200&auto=format&fit=crop",
+    ],
+  },
+  {
+    title: "Men's Leather Crossbody Shoot",
+    category: "Men's Bags",
+    images: [
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1547949003-9792a18a2601?q=80&w=1200&auto=format&fit=crop",
+    ],
+  },
+  {
+    title: "Executive Laptop & Duffel Shoot",
+    category: "Travel Bags",
+    images: [
+      "https://images.unsplash.com/photo-1553531384-411a4ff74811?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&w=1200&auto=format&fit=crop",
+    ],
+  },
+];
+
+// ============================================================
+// SAMPLE PRODUCTS (All updated with High-Fashion Model Photoshoot Images)
 // ============================================================
 export const PRODUCTS: Product[] = [
   {
@@ -44,7 +88,7 @@ export const PRODUCTS: Product[] = [
     name: "Classic Leather Handbag",
     slug: "classic-leather-handbag",
     description:
-      "A timeless classic leather handbag perfect for professional and casual settings. Crafted with premium vegan leather, this spacious bag features multiple compartments to keep your essentials organized. The structured silhouette and polished gold hardware make it a versatile choice for any outfit.",
+      "A timeless classic leather handbag crafted for modern Indian women. Features high-fashion model photoshoot styling, gold anti-tarnish zippers, and spacious organized compartments.",
     price: 2499,
     originalPrice: 3499,
     sku: "CB-LH-001",
@@ -55,9 +99,9 @@ export const PRODUCTS: Product[] = [
     colors: ["Black", "Brown", "Tan"],
     sizes: ["Medium", "Large"],
     images: [
-      "https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=1000&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?q=80&w=1000&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=1000&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?q=80&w=1200&auto=format&fit=crop",
     ],
     featured: true,
     bestseller: true,
@@ -70,7 +114,7 @@ export const PRODUCTS: Product[] = [
       Weight: "0.6 kg",
       Closure: "Top Zip",
       Hardware: "Gold-tone",
-      "Care Instructions": "Wipe with a damp cloth. Avoid prolonged exposure to water.",
+      "Photoshoot Style": "Studio & Outdoor Model Shoot",
     },
   },
   {
@@ -78,7 +122,7 @@ export const PRODUCTS: Product[] = [
     name: "Premium Women's Sling Bag",
     slug: "premium-womens-sling-bag",
     description:
-      "Stylish sling bag made from premium vegan leather. Compact yet spacious enough for your daily essentials. Features an adjustable strap for cross-body or shoulder carry.",
+      "Chic crossbody sling bag captured in high-fashion urban model photoshoots. Light, comfortable, and perfect for day-to-night styling.",
     price: 1299,
     originalPrice: 1999,
     sku: "CB-SB-001",
@@ -89,8 +133,9 @@ export const PRODUCTS: Product[] = [
     colors: ["Tan", "Black", "Red"],
     sizes: ["Small"],
     images: [
-      "https://images.unsplash.com/photo-1591561954557-26941169b49e?q=80&w=1000&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=1000&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1591561954557-26941169b49e?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1598532163257-ae3c6b2524b6?q=80&w=1200&auto=format&fit=crop",
     ],
     featured: false,
     bestseller: true,
@@ -103,7 +148,7 @@ export const PRODUCTS: Product[] = [
       Weight: "0.3 kg",
       Strap: "Adjustable, removable",
       Closure: "Zip",
-      "Care Instructions": "Wipe with a soft cloth.",
+      "Photoshoot Style": "Urban Street Fashion Model Shoot",
     },
   },
   {
@@ -111,7 +156,7 @@ export const PRODUCTS: Product[] = [
     name: "Minimal Shoulder Bag",
     slug: "minimal-shoulder-bag",
     description:
-      "Clean and minimal shoulder bag for everyday elegance. Large enough for a laptop up to 13 inches, making it ideal for work and weekend outings alike.",
+      "Clean minimal shoulder bag photographed with professional fashion models. Holds up to a 13-inch laptop and daily makeup essentials.",
     price: 1899,
     originalPrice: 2599,
     sku: "CB-SH-001",
@@ -122,8 +167,8 @@ export const PRODUCTS: Product[] = [
     colors: ["Beige", "White", "Grey"],
     sizes: ["Medium", "Large"],
     images: [
-      "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=1000&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1591561954557-26941169b49e?q=80&w=1000&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=1200&auto=format&fit=crop",
     ],
     featured: true,
     bestseller: false,
@@ -136,6 +181,7 @@ export const PRODUCTS: Product[] = [
       Weight: "0.5 kg",
       Closure: "Magnetic Snap",
       "Laptop Compartment": "Fits 13-inch laptop",
+      "Photoshoot Style": "Minimalist Lifestyle Model Shoot",
     },
   },
   {
@@ -143,7 +189,7 @@ export const PRODUCTS: Product[] = [
     name: "Everyday Tote Bag",
     slug: "everyday-tote-bag",
     description:
-      "Spacious tote bag for carrying your world with you. Open top design with internal zip pocket for valuables. Perfect for shopping, beach trips, or as an office bag.",
+      "Spacious cotton canvas tote featured in summer street style model photoshoots. Designed for work, coffee dates, and shopping trips.",
     price: 1599,
     originalPrice: 2199,
     sku: "CB-TB-001",
@@ -154,8 +200,8 @@ export const PRODUCTS: Product[] = [
     colors: ["Navy Blue", "Olive", "Beige"],
     sizes: ["Large"],
     images: [
-      "https://images.unsplash.com/photo-1622560480605-d83c853bc5c3?q=80&w=1000&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=1000&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1622560480605-d83c853bc5c3?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=1200&auto=format&fit=crop",
     ],
     featured: false,
     bestseller: true,
@@ -168,6 +214,7 @@ export const PRODUCTS: Product[] = [
       Weight: "0.4 kg",
       Handles: "Reinforced fabric handles",
       Closure: "Open top with internal zip pocket",
+      "Photoshoot Style": "Summer Tote Model Shoot",
     },
   },
   {
@@ -175,7 +222,7 @@ export const PRODUCTS: Product[] = [
     name: "Elegant Party Clutch",
     slug: "elegant-party-clutch",
     description:
-      "Shimmering party clutch to elevate your evening look. Compact design with a chain strap — can be worn as a clutch or crossbody.",
+      "Shimmering party clutch with metallic gold chain strap. Photographed in evening glam model photoshoots.",
     price: 999,
     originalPrice: 1499,
     sku: "CB-PU-001",
@@ -186,7 +233,8 @@ export const PRODUCTS: Product[] = [
     colors: ["Gold", "Silver", "Black"],
     sizes: ["Small"],
     images: [
-      "https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=1000&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1598532163257-ae3c6b2524b6?q=80&w=1200&auto=format&fit=crop",
     ],
     featured: true,
     bestseller: false,
@@ -198,6 +246,7 @@ export const PRODUCTS: Product[] = [
       Dimensions: "20cm (W) x 12cm (H) x 4cm (D)",
       Strap: "Detachable gold chain, 120cm",
       Closure: "Snap button",
+      "Photoshoot Style": "Evening Glam Party Model Shoot",
     },
   },
   {
@@ -205,7 +254,7 @@ export const PRODUCTS: Product[] = [
     name: "Men's Crossbody Bag",
     slug: "mens-crossbody-bag",
     description:
-      "Rugged and practical crossbody bag for men. Multiple pockets keep your phone, wallet and essentials organized for daily commutes or travel.",
+      "Rugged and stylish men's crossbody bag featured in male executive model photoshoots. Designed with ballistic nylon & leather accents.",
     price: 1799,
     originalPrice: 2499,
     sku: "CB-MB-001",
@@ -216,7 +265,8 @@ export const PRODUCTS: Product[] = [
     colors: ["Black", "Grey", "Khaki"],
     sizes: ["Medium"],
     images: [
-      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&w=1000&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1547949003-9792a18a2601?q=80&w=1200&auto=format&fit=crop",
     ],
     featured: true,
     bestseller: true,
@@ -229,6 +279,7 @@ export const PRODUCTS: Product[] = [
       Weight: "0.45 kg",
       Pockets: "1 main + 2 front + 1 back",
       Strap: "Adjustable padded strap",
+      "Photoshoot Style": "Male Executive Model Shoot",
     },
   },
   {
@@ -236,7 +287,7 @@ export const PRODUCTS: Product[] = [
     name: "Premium Laptop Bag",
     slug: "premium-laptop-bag",
     description:
-      "Sleek laptop bag with padded compartments. Professional look with the ability to carry a 15.6-inch laptop. Water-resistant material keeps your devices safe.",
+      "Professional laptop bag for business executives. Photographed with male models in executive office photoshoots.",
     price: 2999,
     originalPrice: 3999,
     sku: "CB-MB-002",
@@ -247,8 +298,8 @@ export const PRODUCTS: Product[] = [
     colors: ["Brown", "Black"],
     sizes: ["15 inch", "13 inch"],
     images: [
-      "https://images.unsplash.com/photo-1553531384-411a4ff74811?q=80&w=1000&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&w=1000&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1553531384-411a4ff74811?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&w=1200&auto=format&fit=crop",
     ],
     featured: true,
     bestseller: true,
@@ -261,6 +312,7 @@ export const PRODUCTS: Product[] = [
       "Laptop Compartment": "Fits up to 15.6 inch",
       Weight: "0.7 kg",
       Pockets: "Padded laptop sleeve + 3 organizer pockets",
+      "Photoshoot Style": "Corporate Model Shoot",
     },
   },
   {
@@ -268,7 +320,7 @@ export const PRODUCTS: Product[] = [
     name: "Travel Duffel Bag",
     slug: "travel-duffel-bag",
     description:
-      "Spacious travel duffel bag for weekend getaways. Large main compartment with a padded shoe compartment and wet pocket. Carry-on size compliant with most airlines.",
+      "Spacious travel duffel bag featured in airport jetset model photoshoots. Includes shoe compartment & padded shoulder strap.",
     price: 3499,
     originalPrice: 4999,
     sku: "CB-TR-001",
@@ -279,7 +331,8 @@ export const PRODUCTS: Product[] = [
     colors: ["Olive Green", "Navy", "Black"],
     sizes: ["Extra Large"],
     images: [
-      "https://images.unsplash.com/photo-1553531384-411a4ff74811?q=80&w=1000&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1553531384-411a4ff74811?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1547949003-9792a18a2601?q=80&w=1200&auto=format&fit=crop",
     ],
     featured: true,
     bestseller: false,
@@ -291,7 +344,7 @@ export const PRODUCTS: Product[] = [
       Dimensions: "55cm (L) x 28cm (W) x 28cm (H)",
       Capacity: "50 litres",
       Weight: "0.9 kg",
-      Pockets: "Main + shoe compartment + 2 side pockets",
+      "Photoshoot Style": "Airport Travel Model Shoot",
     },
   },
   {
@@ -299,7 +352,7 @@ export const PRODUCTS: Product[] = [
     name: "Unisex Canvas Backpack",
     slug: "unisex-canvas-backpack",
     description:
-      "Durable canvas backpack suitable for college and casual outings. Fits a 15-inch laptop. Adjustable padded shoulder straps for comfortable all-day wear.",
+      "Durable canvas backpack suitable for college & casual travel. Photographed in outdoor street style model shoots.",
     price: 1499,
     originalPrice: 2299,
     sku: "CB-UB-001",
@@ -310,7 +363,8 @@ export const PRODUCTS: Product[] = [
     colors: ["Beige", "Charcoal", "Olive"],
     sizes: ["Medium", "Large"],
     images: [
-      "https://images.unsplash.com/photo-1622560480605-d83c853bc5c3?q=80&w=1000&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1622560480605-d83c853bc5c3?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=1200&auto=format&fit=crop",
     ],
     featured: false,
     bestseller: true,
@@ -322,51 +376,39 @@ export const PRODUCTS: Product[] = [
       Dimensions: "30cm (W) x 45cm (H) x 15cm (D)",
       Capacity: "25 litres",
       "Laptop Compartment": "Fits 15-inch laptop",
-      Weight: "0.55 kg",
+      "Photoshoot Style": "College Street Model Shoot",
     },
   },
 ];
 
 // ============================================================
-// DATA ACCESS FUNCTIONS — swap these for Prisma when ready
+// DATA ACCESS FUNCTIONS
 // ============================================================
 
-/** Get all products */
 export async function getAllProducts(): Promise<Product[]> {
-  // TODO: Replace with → return prisma.product.findMany({ include: { images: true, category: true } });
   return PRODUCTS;
 }
 
-/** Get a single product by slug */
 export async function getProductBySlug(slug: string): Promise<Product | null> {
-  // TODO: Replace with → return prisma.product.findUnique({ where: { slug }, include: { images: true, category: true } });
   return PRODUCTS.find((p) => p.slug === slug) ?? null;
 }
 
-/** Get featured products */
 export async function getFeaturedProducts(): Promise<Product[]> {
-  // TODO: Replace with → return prisma.product.findMany({ where: { featured: true } });
   return PRODUCTS.filter((p) => p.featured);
 }
 
-/** Get bestseller products */
 export async function getBestsellers(): Promise<Product[]> {
-  // TODO: Replace with → return prisma.product.findMany({ where: { bestseller: true } });
   return PRODUCTS.filter((p) => p.bestseller);
 }
 
-/** Get new arrivals */
 export async function getNewArrivals(): Promise<Product[]> {
-  // TODO: Replace with → return prisma.product.findMany({ where: { newArrival: true } });
   return PRODUCTS.filter((p) => p.newArrival);
 }
 
-/** Get products by category */
 export async function getProductsByCategory(categorySlug: string): Promise<Product[]> {
   return PRODUCTS.filter((p) => p.categorySlug === categorySlug);
 }
 
-/** Delete product by ID */
 export async function deleteProduct(id: string): Promise<boolean> {
   const index = PRODUCTS.findIndex((p) => p.id === id);
   if (index !== -1) {
@@ -376,7 +418,6 @@ export async function deleteProduct(id: string): Promise<boolean> {
   return false;
 }
 
-/** Add a new product */
 export async function addProduct(productData: Partial<Product>): Promise<Product> {
   const categoryObj = CATEGORIES.find((c) => c.slug === productData.categorySlug);
   const newProduct: Product = {
@@ -393,18 +434,17 @@ export async function addProduct(productData: Partial<Product>): Promise<Product
     brand: productData.brand || 'DELA BAGS',
     colors: productData.colors && productData.colors.length > 0 ? productData.colors : ['Black'],
     sizes: productData.sizes && productData.sizes.length > 0 ? productData.sizes : ['Medium'],
-    images: productData.images && productData.images.length > 0 ? productData.images : ['https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=1000&auto=format&fit=crop'],
+    images: productData.images && productData.images.length > 0 ? productData.images : ['https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=1200&auto=format&fit=crop'],
     featured: productData.featured || false,
     bestseller: productData.bestseller || false,
     newArrival: productData.newArrival ?? true,
     rating: 5.0,
-    reviews: 1,
+    reviews: 0,
   };
   PRODUCTS.unshift(newProduct);
   return newProduct;
 }
 
-/** Update existing product */
 export async function updateProduct(id: string, updates: Partial<Product>): Promise<Product | null> {
   const index = PRODUCTS.findIndex((p) => p.id === id);
   if (index === -1) return null;
