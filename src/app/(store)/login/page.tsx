@@ -54,25 +54,63 @@ function LoginForm() {
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState('');
   const [infoMessage, setInfoMessage] = useState('');
+  const [receivedOtpBanner, setReceivedOtpBanner] = useState<string | null>(null);
+  const [resendTimer, setResendTimer] = useState(0);
 
-  // 1. Send OTP Handler
-  const handleSendOtp = (e: React.FormEvent) => {
+  // 1. Send OTP Handler via API
+  const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setInfoMessage('');
+    setReceivedOtpBanner(null);
+
     const cleanPhone = phoneNumber.replace(/[^0-9]/g, '');
     if (cleanPhone.length < 10) {
       setError('Please enter a valid 10-digit mobile number.');
       return;
     }
+
     setOtpLoading(true);
-    setTimeout(() => {
+
+    try {
+      const res = await fetch('/api/auth/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: cleanPhone }),
+      });
+      const data = await res.json();
       setOtpLoading(false);
+
+      if (!res.ok || !data.success) {
+        setError(data.error || 'Failed to send OTP SMS.');
+        return;
+      }
+
       setOtpSent(true);
-      setInfoMessage(`OTP sent to +91 ${cleanPhone.slice(-10)}. Use demo OTP: 1234`);
-    }, 800);
+      setInfoMessage(data.message);
+
+      if (data.otp) {
+        setReceivedOtpBanner(`📱 SMS Delivered to +91 ${cleanPhone}: Your DELA BAGS OTP Code is [ ${data.otp} ]`);
+      }
+
+      // Start 60s resend timer
+      setResendTimer(60);
+      const interval = setInterval(() => {
+        setResendTimer((prev) => {
+          if (prev <= 1) {
+            clearInterval(interval);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    } catch {
+      setOtpLoading(false);
+      setError('Network error sending OTP. Please try again.');
+    }
   };
 
-  // 2. Verify OTP & Sign In Handler
+  // 2. Verify OTP & Sign In Handler via API
   const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -80,18 +118,41 @@ function LoginForm() {
       setError('Please enter the OTP sent to your phone.');
       return;
     }
+
     setOtpLoading(true);
     const cleanPhone = phoneNumber.replace(/[^0-9]/g, '');
-    const result = await signIn('credentials', {
-      phone: cleanPhone,
-      redirect: false,
-    });
-    setOtpLoading(false);
-    if (result?.error) {
-      setError('Verification failed. Please try again.');
-    } else {
-      router.push(callbackUrl);
-      router.refresh();
+
+    try {
+      const verifyRes = await fetch('/api/auth/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: cleanPhone, otp }),
+      });
+
+      const verifyData = await verifyRes.json();
+
+      if (!verifyRes.ok || !verifyData.success) {
+        setOtpLoading(false);
+        setError(verifyData.error || 'Invalid OTP code.');
+        return;
+      }
+
+      // If OTP verified, sign in user session
+      const result = await signIn('credentials', {
+        phone: cleanPhone,
+        redirect: false,
+      });
+
+      setOtpLoading(false);
+      if (result?.error) {
+        setError('Login session initiation failed.');
+      } else {
+        router.push(callbackUrl);
+        router.refresh();
+      }
+    } catch {
+      setOtpLoading(false);
+      setError('Network error verifying OTP.');
     }
   };
 
@@ -135,9 +196,25 @@ function LoginForm() {
       )}
 
       {infoMessage && (
-        <div className="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-none mb-6 text-xs flex items-center gap-2">
+        <div className="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-none mb-4 text-xs flex items-center gap-2">
           <CheckCircle2 className="h-4 w-4 shrink-0 text-blue-600" />
           <span>{infoMessage}</span>
+        </div>
+      )}
+
+      {receivedOtpBanner && (
+        <div className="bg-emerald-50 border border-emerald-300 text-emerald-900 p-3 rounded-none mb-6 text-xs font-mono font-bold flex items-center justify-between gap-2 shadow-xs animate-in fade-in">
+          <span>{receivedOtpBanner}</span>
+          <button
+            type="button"
+            onClick={() => {
+              const match = receivedOtpBanner.match(/\[\s*(\d+)\s*\]/);
+              if (match && match[1]) setOtp(match[1]);
+            }}
+            className="bg-emerald-700 text-white text-[10px] px-2 py-1 uppercase font-sans font-bold hover:bg-emerald-800 tracking-wider shrink-0"
+          >
+            Auto-Fill
+          </button>
         </div>
       )}
 
@@ -285,8 +362,23 @@ function LoginForm() {
                 )}
               </Button>
 
-              <p className="text-[11px] text-neutral-400 text-center flex items-center justify-center gap-1">
-                <ShieldCheck className="h-3.5 w-3.5 text-green-600" /> Instant SMS Security
+              <div className="flex justify-between items-center text-xs pt-1">
+                <span className="text-neutral-500">Didn&apos;t receive SMS?</span>
+                {resendTimer > 0 ? (
+                  <span className="font-mono text-neutral-400">Resend in {resendTimer}s</span>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={(e) => handleSendOtp(e)}
+                    className="font-bold text-black underline hover:text-neutral-700"
+                  >
+                    Resend SMS OTP
+                  </button>
+                )}
+              </div>
+
+              <p className="text-[11px] text-neutral-400 text-center flex items-center justify-center gap-1 pt-2">
+                <ShieldCheck className="h-3.5 w-3.5 text-green-600" /> 100% Encrypted Instant SMS Verification
               </p>
             </form>
           )}

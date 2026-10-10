@@ -33,6 +33,13 @@ export default function CheckoutPage() {
     lng: null as number | null,
   });
 
+  // SMS OTP Verification States for Checkout
+  const [phoneOtpSent, setPhoneOtpSent] = useState(false);
+  const [phoneOtp, setPhoneOtp] = useState('');
+  const [phoneOtpLoading, setPhoneOtpLoading] = useState(false);
+  const [isPhoneVerified, setIsPhoneVerified] = useState(false);
+  const [checkoutOtpBanner, setCheckoutOtpBanner] = useState<string | null>(null);
+
   const cart = useCart();
   const subtotal = cart.getCartTotal();
   const discount = cart.getDiscountTotal();
@@ -61,6 +68,73 @@ export default function CheckoutPage() {
       lat: loc.lat,
       lng: loc.lng,
     }));
+  };
+
+  const handleCheckoutSendOtp = async () => {
+    setError('');
+    setCheckoutOtpBanner(null);
+    const cleanPhone = form.phone.replace(/[^0-9]/g, '');
+    if (cleanPhone.length < 10) {
+      setError('Please enter a valid 10-digit phone number to receive SMS OTP.');
+      return;
+    }
+
+    setPhoneOtpLoading(true);
+    try {
+      const res = await fetch('/api/auth/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: cleanPhone }),
+      });
+      const data = await res.json();
+      setPhoneOtpLoading(false);
+
+      if (!res.ok || !data.success) {
+        setError(data.error || 'Failed to dispatch SMS OTP.');
+        return;
+      }
+
+      setPhoneOtpSent(true);
+      if (data.otp) {
+        setCheckoutOtpBanner(`📱 SMS OTP Code: [ ${data.otp} ] sent to +91 ${cleanPhone}`);
+      }
+    } catch {
+      setPhoneOtpLoading(false);
+      setError('Failed to request SMS OTP.');
+    }
+  };
+
+  const handleCheckoutVerifyOtp = async () => {
+    setError('');
+    if (!phoneOtp.trim()) {
+      setError('Please enter the 4-digit OTP code received via SMS.');
+      return;
+    }
+
+    const cleanPhone = form.phone.replace(/[^0-9]/g, '');
+    setPhoneOtpLoading(true);
+
+    try {
+      const res = await fetch('/api/auth/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: cleanPhone, otp: phoneOtp }),
+      });
+      const data = await res.json();
+      setPhoneOtpLoading(false);
+
+      if (!res.ok || !data.success) {
+        setError(data.error || 'Invalid OTP code.');
+        return;
+      }
+
+      setIsPhoneVerified(true);
+      setPhoneOtpSent(false);
+      setCheckoutOtpBanner(null);
+    } catch {
+      setPhoneOtpLoading(false);
+      setError('Failed to verify OTP.');
+    }
   };
 
   const handlePlaceOrder = async (e: React.FormEvent) => {
@@ -287,9 +361,80 @@ export default function CheckoutPage() {
                   <Label htmlFor="pincode">PIN Code</Label>
                   <Input id="pincode" placeholder="400008" value={form.pincode} onChange={handleInputChange} className="rounded-none bg-neutral-50" required />
                 </div>
-                <div className="space-y-1">
-                  <Label htmlFor="phone">Phone Number (for Order & Delivery SMS/WhatsApp)</Label>
-                  <Input id="phone" type="tel" placeholder="+91 98765 43210" value={form.phone} onChange={handleInputChange} className="rounded-none bg-neutral-50" required />
+                <div className="col-span-1 md:col-span-2 space-y-2">
+                  <div className="flex justify-between items-center">
+                    <Label htmlFor="phone">Mobile Phone Number (for Delivery SMS)</Label>
+                    {isPhoneVerified && (
+                      <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 border border-emerald-200 uppercase tracking-wider flex items-center gap-1">
+                        ✓ SMS Verified
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="flex gap-2">
+                    <Input
+                      id="phone"
+                      type="tel"
+                      placeholder="+91 98765 43210"
+                      value={form.phone}
+                      onChange={handleInputChange}
+                      className="rounded-none bg-neutral-50 flex-1 font-mono"
+                      required
+                    />
+                    {!isPhoneVerified && (
+                      <Button
+                        type="button"
+                        onClick={handleCheckoutSendOtp}
+                        disabled={phoneOtpLoading || !form.phone}
+                        className="bg-black text-white hover:bg-neutral-800 rounded-none text-xs font-bold uppercase tracking-wider h-10 px-4"
+                      >
+                        {phoneOtpLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'VERIFY VIA SMS OTP'}
+                      </Button>
+                    )}
+                  </div>
+
+                  {checkoutOtpBanner && (
+                    <div className="bg-emerald-50 border border-emerald-300 text-emerald-900 p-2.5 text-xs font-mono font-bold flex items-center justify-between gap-2">
+                      <span>{checkoutOtpBanner}</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const match = checkoutOtpBanner.match(/\[\s*(\d+)\s*\]/);
+                          if (match && match[1]) setPhoneOtp(match[1]);
+                        }}
+                        className="bg-emerald-700 text-white text-[10px] px-2 py-0.5 font-sans uppercase font-bold"
+                      >
+                        Auto-Fill
+                      </button>
+                    </div>
+                  )}
+
+                  {phoneOtpSent && !isPhoneVerified && (
+                    <div className="bg-neutral-50 border p-3 space-y-2">
+                      <Label htmlFor="phoneOtp" className="text-xs font-bold uppercase tracking-wider text-neutral-700">
+                        Enter 4-Digit OTP Code Received on SMS
+                      </Label>
+                      <div className="flex gap-2">
+                        <Input
+                          id="phoneOtp"
+                          type="text"
+                          value={phoneOtp}
+                          onChange={(e) => setPhoneOtp(e.target.value)}
+                          placeholder="e.g. 1234"
+                          maxLength={6}
+                          className="rounded-none bg-white text-center font-mono text-base font-bold tracking-widest flex-1"
+                        />
+                        <Button
+                          type="button"
+                          onClick={handleCheckoutVerifyOtp}
+                          disabled={phoneOtpLoading}
+                          className="bg-emerald-700 hover:bg-emerald-800 text-white rounded-none text-xs font-bold uppercase tracking-wider h-10 px-5"
+                        >
+                          {phoneOtpLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'SUBMIT OTP'}
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
