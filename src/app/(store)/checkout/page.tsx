@@ -393,22 +393,6 @@ export default function CheckoutPage() {
                     )}
                   </div>
 
-                  {checkoutOtpBanner && (
-                    <div className="bg-emerald-50 border border-emerald-300 text-emerald-900 p-2.5 text-xs font-mono font-bold flex items-center justify-between gap-2">
-                      <span>{checkoutOtpBanner}</span>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const match = checkoutOtpBanner.match(/\[\s*(\d+)\s*\]/);
-                          if (match && match[1]) setPhoneOtp(match[1]);
-                        }}
-                        className="bg-emerald-700 text-white text-[10px] px-2 py-0.5 font-sans uppercase font-bold"
-                      >
-                        Auto-Fill
-                      </button>
-                    </div>
-                  )}
-
                   {phoneOtpSent && !isPhoneVerified && (
                     <div className="bg-neutral-50 border p-3 space-y-2">
                       <Label htmlFor="phoneOtp" className="text-xs font-bold uppercase tracking-wider text-neutral-700">

@@ -17,14 +17,13 @@ export async function POST(req: Request) {
     // Generate random 4-digit OTP
     const otp = generateOtp(cleanPhone);
 
-    // Send SMS via Gateway (or SMS simulation)
+    // Dispatch SMS via Gateway
     const smsResult = await sendSmsOtp(cleanPhone, otp);
 
     return NextResponse.json({
       success: true,
-      message: `SMS OTP dispatched to +91 ${cleanPhone.slice(0, 2)}*****${cleanPhone.slice(-3)}.`,
+      message: `SMS OTP dispatched to +91 ${cleanPhone.slice(0, 2)}*****${cleanPhone.slice(-3)}. Please enter the OTP code received on your mobile phone.`,
       phone: cleanPhone,
-      otp: otp, // Returned for simulated SMS banner display when live SMS gateway key is not set
       gateway: smsResult.gateway,
     });
   } catch {

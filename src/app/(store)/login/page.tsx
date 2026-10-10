@@ -89,10 +89,6 @@ function LoginForm() {
       setOtpSent(true);
       setInfoMessage(data.message);
 
-      if (data.otp) {
-        setReceivedOtpBanner(`📱 SMS Delivered to +91 ${cleanPhone}: Your DELA BAGS OTP Code is [ ${data.otp} ]`);
-      }
-
       // Start 60s resend timer
       setResendTimer(60);
       const interval = setInterval(() => {
@@ -196,25 +192,9 @@ function LoginForm() {
       )}
 
       {infoMessage && (
-        <div className="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-none mb-4 text-xs flex items-center gap-2">
+        <div className="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-none mb-6 text-xs flex items-center gap-2">
           <CheckCircle2 className="h-4 w-4 shrink-0 text-blue-600" />
           <span>{infoMessage}</span>
-        </div>
-      )}
-
-      {receivedOtpBanner && (
-        <div className="bg-emerald-50 border border-emerald-300 text-emerald-900 p-3 rounded-none mb-6 text-xs font-mono font-bold flex items-center justify-between gap-2 shadow-xs animate-in fade-in">
-          <span>{receivedOtpBanner}</span>
-          <button
-            type="button"
-            onClick={() => {
-              const match = receivedOtpBanner.match(/\[\s*(\d+)\s*\]/);
-              if (match && match[1]) setOtp(match[1]);
-            }}
-            className="bg-emerald-700 text-white text-[10px] px-2 py-1 uppercase font-sans font-bold hover:bg-emerald-800 tracking-wider shrink-0"
-          >
-            Auto-Fill
-          </button>
         </div>
       )}
 
