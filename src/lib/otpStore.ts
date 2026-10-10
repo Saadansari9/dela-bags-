@@ -92,12 +92,18 @@ export async function sendSmsOtp(phone: string, otp: string): Promise<{ success:
     }
   }
 
-  // 2. 2FACTOR GATEWAY (India)
+  // 2. 2FACTOR GATEWAY (India - Instant Free OTP)
   const twoFactorKey = (process.env.TWOFACTOR_API_KEY || process.env.FACTOR2_API_KEY || '').trim();
   if (twoFactorKey) {
     try {
-      const res = await fetch(`https://2factor.in/API/V1/${twoFactorKey}/SMS/+91${cleanPhone}/${otp}/DELABAGS`);
-      const data = await res.json();
+      let res = await fetch(`https://2factor.in/API/V1/${twoFactorKey}/SMS/${cleanPhone}/${otp}`);
+      let data = await res.json();
+      if (data && data.Status === 'Success') {
+        return { success: true, gateway: '2Factor' };
+      }
+
+      res = await fetch(`https://2factor.in/API/V1/${twoFactorKey}/SMS/+91${cleanPhone}/${otp}/DELABAGS`);
+      data = await res.json();
       if (data && data.Status === 'Success') {
         return { success: true, gateway: '2Factor' };
       }
