@@ -54,7 +54,11 @@ export async function sendSmsOtp(phone: string, otp: string): Promise<{ success:
   const cleanPhone = phone.replace(/[^0-9]/g, '').slice(-10);
 
   // 1. FAST2SMS GATEWAY (India)
-  const fast2smsKey = (process.env.FAST2SMS_API_KEY || process.env.SMS_API_KEY || '').trim();
+  const fast2smsKey = (
+    process.env.FAST2SMS_API_KEY ||
+    process.env.SMS_API_KEY ||
+    'wvuWsKkDcoGjILfqpZy0165l2iSnE4RJearzgxA73mXtPbOdBVkBnhStYNcDwHmPfKrji7sCJyTzV2R0'
+  ).trim();
   if (fast2smsKey) {
     try {
       // Primary: Fast2SMS POST route 'otp'
