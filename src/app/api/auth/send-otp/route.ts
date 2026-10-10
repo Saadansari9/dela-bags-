@@ -20,9 +20,11 @@ export async function POST(req: Request) {
     // Dispatch SMS via Gateway
     const smsResult = await sendSmsOtp(cleanPhone, otp);
 
+    const message = smsResult.notice || `SMS OTP dispatched to +91 ${cleanPhone.slice(0, 2)}*****${cleanPhone.slice(-3)}. Please enter the OTP code received on your mobile phone.`;
+
     return NextResponse.json({
       success: true,
-      message: `SMS OTP dispatched to +91 ${cleanPhone.slice(0, 2)}*****${cleanPhone.slice(-3)}. Please enter the OTP code received on your mobile phone.`,
+      message,
       phone: cleanPhone,
       gateway: smsResult.gateway,
     });

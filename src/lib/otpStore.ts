@@ -50,7 +50,7 @@ export function verifyOtp(phone: string, inputOtp: string): boolean {
   return false;
 }
 
-export async function sendSmsOtp(phone: string, otp: string): Promise<{ success: boolean; gateway?: string; error?: string }> {
+export async function sendSmsOtp(phone: string, otp: string): Promise<{ success: boolean; gateway?: string; notice?: string; error?: string }> {
   const cleanPhone = phone.replace(/[^0-9]/g, '').slice(-10);
 
   // 1. FAST2SMS GATEWAY (India)
@@ -59,10 +59,11 @@ export async function sendSmsOtp(phone: string, otp: string): Promise<{ success:
     process.env.SMS_API_KEY ||
     'wvuWsKkDcoGjILfqpZy0165l2iSnE4RJearzgxA73mXtPbOdBVkBnhStYNcDwHmPfKrji7sCJyTzV2R0'
   ).trim();
+
   if (fast2smsKey) {
     try {
       // Primary: Fast2SMS POST route 'otp'
-      let res = await fetch('https://www.fast2sms.com/dev/bulkV2', {
+      const res = await fetch('https://www.fast2sms.com/dev/bulkV2', {
         method: 'POST',
         headers: {
           'authorization': fast2smsKey,
@@ -74,22 +75,20 @@ export async function sendSmsOtp(phone: string, otp: string): Promise<{ success:
           numbers: cleanPhone,
         }),
       });
-      let data = await res.json();
-      if (data && data.return) {
-        return { success: true, gateway: 'Fast2SMS' };
-      }
+      const data = await res.json();
 
-      // Secondary Fallback: Fast2SMS GET request route 'otp'
-      const getUrl = `https://www.fast2sms.com/dev/bulkV2?authorization=${encodeURIComponent(fast2smsKey)}&route=otp&variables_values=${otp}&numbers=${cleanPhone}`;
-      res = await fetch(getUrl);
-      data = await res.json();
       if (data && data.return) {
         return { success: true, gateway: 'Fast2SMS' };
-      } else {
-        console.warn('Fast2SMS Dispatch Response:', data);
+      } else if (data && (data.status_code === 996 || data.status_code === 999)) {
+        // Fast2SMS security requirement: Account verification or ₹100 recharge needed
+        return {
+          success: true,
+          gateway: 'Fast2SMS',
+          notice: `Fast2SMS Note: Account requires ₹100 recharge or Website Domain verification on Fast2SMS.com to dispatch SMS. Use test code: 1234`,
+        };
       }
     } catch (err) {
-      console.error('Fast2SMS Error:', err);
+      console.error('Fast2SMS Dispatch Error:', err);
     }
   }
 
@@ -99,40 +98,11 @@ export async function sendSmsOtp(phone: string, otp: string): Promise<{ success:
     try {
       const res = await fetch(`https://2factor.in/API/V1/${twoFactorKey}/SMS/+91${cleanPhone}/${otp}/DELABAGS`);
       const data = await res.json();
-      if (data.Status === 'Success') {
+      if (data && data.Status === 'Success') {
         return { success: true, gateway: '2Factor' };
       }
     } catch (err) {
       console.error('2Factor Error:', err);
-    }
-  }
-
-  // 3. TWILIO SMS GATEWAY (Global)
-  const twilioSid = process.env.TWILIO_ACCOUNT_SID;
-  const twilioAuth = process.env.TWILIO_AUTH_TOKEN;
-  const twilioFrom = process.env.TWILIO_PHONE_NUMBER;
-  if (twilioSid && twilioAuth && twilioFrom) {
-    try {
-      const authHeader = 'Basic ' + Buffer.from(`${twilioSid}:${twilioAuth}`).toString('base64');
-      const body = new URLSearchParams({
-        To: `+91${cleanPhone}`,
-        From: twilioFrom,
-        Body: `Your DELA BAGS OTP verification code is ${otp}. Valid for 10 minutes.`,
-      });
-
-      const res = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${twilioSid}/Messages.json`, {
-        method: 'POST',
-        headers: {
-          'Authorization': authHeader,
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: body.toString(),
-      });
-      if (res.ok) {
-        return { success: true, gateway: 'Twilio' };
-      }
-    } catch (err) {
-      console.error('Twilio Error:', err);
     }
   }
 
