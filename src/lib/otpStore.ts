@@ -54,10 +54,11 @@ export async function sendSmsOtp(phone: string, otp: string): Promise<{ success:
   const cleanPhone = phone.replace(/[^0-9]/g, '').slice(-10);
 
   // 1. FAST2SMS GATEWAY (India)
-  const fast2smsKey = process.env.FAST2SMS_API_KEY || process.env.SMS_API_KEY;
+  const fast2smsKey = (process.env.FAST2SMS_API_KEY || process.env.SMS_API_KEY || '').trim();
   if (fast2smsKey) {
     try {
-      const res = await fetch('https://www.fast2sms.com/dev/bulkV2', {
+      // Primary: Fast2SMS POST route 'otp'
+      let res = await fetch('https://www.fast2sms.com/dev/bulkV2', {
         method: 'POST',
         headers: {
           'authorization': fast2smsKey,
@@ -69,9 +70,19 @@ export async function sendSmsOtp(phone: string, otp: string): Promise<{ success:
           numbers: cleanPhone,
         }),
       });
-      const data = await res.json();
-      if (data.return) {
+      let data = await res.json();
+      if (data && data.return) {
         return { success: true, gateway: 'Fast2SMS' };
+      }
+
+      // Secondary Fallback: Fast2SMS GET request route 'otp'
+      const getUrl = `https://www.fast2sms.com/dev/bulkV2?authorization=${encodeURIComponent(fast2smsKey)}&route=otp&variables_values=${otp}&numbers=${cleanPhone}`;
+      res = await fetch(getUrl);
+      data = await res.json();
+      if (data && data.return) {
+        return { success: true, gateway: 'Fast2SMS' };
+      } else {
+        console.warn('Fast2SMS Dispatch Response:', data);
       }
     } catch (err) {
       console.error('Fast2SMS Error:', err);
@@ -79,7 +90,7 @@ export async function sendSmsOtp(phone: string, otp: string): Promise<{ success:
   }
 
   // 2. 2FACTOR GATEWAY (India)
-  const twoFactorKey = process.env.TWOFACTOR_API_KEY || process.env.FACTOR2_API_KEY;
+  const twoFactorKey = (process.env.TWOFACTOR_API_KEY || process.env.FACTOR2_API_KEY || '').trim();
   if (twoFactorKey) {
     try {
       const res = await fetch(`https://2factor.in/API/V1/${twoFactorKey}/SMS/+91${cleanPhone}/${otp}/DELABAGS`);
@@ -121,6 +132,6 @@ export async function sendSmsOtp(phone: string, otp: string): Promise<{ success:
     }
   }
 
-  // Fallback SMS status (No OTP exposed to user UI)
+  // Fallback SMS status
   return { success: true, gateway: 'SMS_GATEWAY' };
 }
