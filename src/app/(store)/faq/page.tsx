@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import Script from 'next/script';
 import { HelpCircle, ChevronDown, Search, MessageCircle, Mail } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 
@@ -83,28 +82,8 @@ export default function FAQPage() {
       f.category.toLowerCase().includes(search.toLowerCase())
   );
 
-  // JSON-LD Structured Data Schema for FAQ
-  const faqSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: FAQS.map((faq) => ({
-      '@type': 'Question',
-      name: faq.question,
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: faq.answer,
-      },
-    })),
-  };
-
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 max-w-4xl">
-      {/* FAQ JSON-LD Structured Data */}
-      <Script
-        id="faq-jsonld"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
 
       <div className="text-center max-w-2xl mx-auto mb-10">
         <div className="h-12 w-12 bg-neutral-100 border border-neutral-300 flex items-center justify-center mx-auto mb-4">
