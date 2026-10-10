@@ -18,29 +18,38 @@ export default function ContactPage() {
     message: '',
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Honeypot spam check (if filled by bot, silently return)
-    if (honeypot.length > 0) {
-      console.warn('Spam submission detected by honeypot.');
-      return;
-    }
 
     if (!form.firstName || !form.email || !form.message) return;
 
     setLoading(true);
-    setTimeout(() => {
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          firstName: form.firstName,
+          lastName: form.lastName,
+          email: form.email,
+          phone: form.phone,
+          message: form.message,
+          hp_field: honeypot,
+        }),
+      });
+
+      const data = await res.json();
+      setLoading(false);
+
+      if (res.ok && data.redirectUrl) {
+        window.location.href = data.redirectUrl;
+      } else {
+        setSubmitted(true);
+      }
+    } catch {
       setLoading(false);
       setSubmitted(true);
-      // Trigger Google Analytics key event if available
-      if (typeof window !== 'undefined' && (window as unknown as { gtag?: (event: string, action: string, data: Record<string, unknown>) => void }).gtag) {
-        (window as unknown as { gtag: (event: string, action: string, data: Record<string, unknown>) => void }).gtag('event', 'generate_lead', {
-          event_category: 'Contact',
-          event_label: 'Message Submitted',
-        });
-      }
-    }, 600);
+    }
   };
 
   return (
