@@ -353,7 +353,7 @@ export default function HomeClient({
               <span>•</span>
               <span className="text-amber-300">100% HANDCRAFTED IN MUMBAI ATELIER</span>
               <span>•</span>
-              <span>CASH ON DELIVERY & INSTANT UPI ACCEPTED</span>
+              <span>100% SECURE PREPAID ORDERS & INSTANT UPI</span>
               <span>•</span>
               <span>24K GOLD-TONE ANTI-TARNISH HARDWARE</span>
               <span>•</span>
@@ -844,10 +844,10 @@ export default function HomeClient({
                 03
               </span>
               <h3 className="font-heading font-bold text-lg uppercase text-black mb-2 tracking-wide">
-                Pan-India Express & COD
+                Pan-India Express Priority
               </h3>
               <p className="text-neutral-600 text-xs sm:text-sm leading-relaxed font-light">
-                Dispatched directly from Mumbai via premium couriers with live GPS tracking, 7-day no-questions return policy, and cash on arrival.
+                Dispatched directly from Mumbai via premium express couriers with live GPS tracking, 7-day no-questions return policy, and 100% buyer protection.
               </p>
               <div className="mt-4 pt-4 border-t border-neutral-200 text-[10px] font-mono uppercase tracking-widest text-neutral-400">
                 19,000+ PIN Codes Covered

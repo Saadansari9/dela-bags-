@@ -49,9 +49,9 @@ export default function ShippingPolicyPage() {
         <section className="space-y-3">
           <h2 className="text-xl font-bold text-black border-b pb-2">2. Shipping Charges</h2>
           <ul className="list-disc pl-5 space-y-2">
-            <li><strong>Orders above ₹1,999:</strong> FREE Shipping across all pincodes in India.</li>
+            <li><strong>Orders above ₹1,999:</strong> FREE Priority Shipping across all pincodes in India.</li>
             <li><strong>Orders below ₹1,999:</strong> Flat ₹99 standard shipping fee applied at checkout.</li>
-            <li><strong>Cash on Delivery (COD):</strong> No hidden COD surcharges. COD is available for orders up to ₹10,000.</li>
+            <li><strong>Prepaid Priority Orders:</strong> To ensure prompt dispatch and transit safety, all orders are processed via 100% secure Prepaid Online Payment (UPI, Cards, NetBanking, Razorpay). Cash on Delivery (COD) is not offered.</li>
           </ul>
         </section>
 

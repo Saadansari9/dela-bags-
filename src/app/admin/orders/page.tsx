@@ -23,7 +23,7 @@ const INITIAL_ORDERS: OrderRecord[] = [
     customerEmail: 'DELAbags.service@gmail.com',
     date: 'Oct 5, 2026',
     total: 2249,
-    paymentMethod: 'COD',
+    paymentMethod: 'Prepaid',
     status: 'Shipped',
   },
   {

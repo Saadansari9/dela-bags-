@@ -16,7 +16,7 @@ const FAQS: FAQItem[] = [
   {
     category: 'Orders & Payments',
     question: 'What payment methods do you accept?',
-    answer: 'We accept Cash on Delivery (COD), Instant UPI (Google Pay, PhonePe, Paytm, BHIM), Debit/Credit Cards (Visa, MasterCard, RuPay), NetBanking, and Razorpay.',
+    answer: 'We accept 100% secure Prepaid Online payments including Instant UPI (Google Pay, PhonePe, Paytm, BHIM), Debit/Credit Cards (Visa, MasterCard, RuPay), NetBanking, and Razorpay. To guarantee fast priority dispatch and prevent fraudulent orders, Cash on Delivery (COD) is not offered.',
   },
   {
     category: 'Orders & Payments',

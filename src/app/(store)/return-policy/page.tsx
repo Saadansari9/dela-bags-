@@ -57,8 +57,7 @@ export default function ReturnsPolicyPage() {
         <section className="space-y-3">
           <h2 className="text-xl font-bold text-black border-b pb-2">3. Refund Processing Timelines</h2>
           <ul className="list-disc pl-5 space-y-2">
-            <li><strong>Prepaid Orders (Cards/UPI/NetBanking):</strong> Refunds are processed to the original payment method within 3 to 5 business days after inspection.</li>
-            <li><strong>Cash on Delivery (COD) Orders:</strong> Refunds are transferred directly to your bank account via UPI or Bank Transfer after providing your account details to our support team.</li>
+            <li><strong>Prepaid Refunds (Cards/UPI/NetBanking):</strong> Refunds are processed directly back to your original payment method (Bank Account or UPI ID) within 3 to 5 business days after product inspection.</li>
           </ul>
         </section>
 

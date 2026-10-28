@@ -14,7 +14,7 @@ const ANNOUNCEMENTS = [
   },
   {
     icon: ShieldCheck,
-    text: '💵 CASH ON DELIVERY AVAILABLE ACROSS 25,000+ PINCODES',
+    text: '🔒 100% SECURE PREPAID CHECKOUT VIA RAZORPAY & INSTANT UPI',
   },
   {
     icon: Sparkles,

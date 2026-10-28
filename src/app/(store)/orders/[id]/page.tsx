@@ -21,7 +21,7 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
     expectedDelivery: 'Oct 8, 2026',
     trackingNumber: 'DELA-EXP-98742',
     courier: 'Delhivery Express',
-    paymentMethod: 'Cash on Delivery (COD)',
+    paymentMethod: 'Prepaid Online (Razorpay / Instant UPI)',
     items: [
       {
         name: 'Classic Leather Handbag',
@@ -152,7 +152,7 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
             <Clock className="h-4 w-4" /> Payment Details
           </h3>
           <p className="font-bold">{order.paymentMethod}</p>
-          <p className="text-emerald-600 font-medium">Status: Authorized / Pending COD</p>
+          <p className="text-emerald-600 font-medium">Status: 100% Paid & Verified (Prepaid)</p>
           <p className="text-xs text-muted-foreground mt-2">
             Invoice Number: <span className="font-mono">DELA-INV-2026-904</span>
           </p>

@@ -4,7 +4,7 @@ export const dynamic = 'force-dynamic';
 
 import Image from "next/image";
 import Link from "next/link";
-import { Lock, ShieldCheck, QrCode, CreditCard, Banknote, Tag, Loader2 } from "lucide-react";
+import { Lock, ShieldCheck, QrCode, CreditCard, Tag, Loader2, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,7 +16,7 @@ import { LocationPickerMap } from "@/components/LocationPickerMap";
 
 export default function CheckoutPage() {
   const [mounted, setMounted] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<'cod' | 'upi' | 'razorpay'>('razorpay');
+  const [paymentMethod, setPaymentMethod] = useState<'upi' | 'razorpay'>('razorpay');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -147,16 +147,7 @@ export default function CheckoutPage() {
     const fullName = `${form.firstName} ${form.lastName}`.trim() || 'Customer';
     const gpsQuery = form.lat && form.lng ? `&lat=${form.lat}&lng=${form.lng}` : '';
 
-    // 1. CASH ON DELIVERY (COD) FLOW
-    if (paymentMethod === 'cod') {
-      setTimeout(() => {
-        cart.clearCart();
-        router.push(`/orders/${orderId}?status=COD_PLACED${gpsQuery}`);
-      }, 1200);
-      return;
-    }
-
-    // 2. RAZORPAY / UPI ONLINE PAYMENT FLOW
+    // 100% PREPAID PAYMENT FLOW (RAZORPAY & UPI)
     try {
       const isLoaded = await loadRazorpayScript();
       if (!isLoaded) {
@@ -425,8 +416,13 @@ export default function CheckoutPage() {
 
             {/* Payment Method */}
             <div>
-              <h2 className="text-xl font-bold mb-2">Select Payment Gateway</h2>
-              <p className="text-xs text-muted-foreground mb-4">All transactions are encrypted and 100% secure.</p>
+              <div className="flex justify-between items-center mb-2">
+                <h2 className="text-xl font-bold">Select Payment Gateway</h2>
+                <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-700 bg-emerald-50 px-2.5 py-0.5 border border-emerald-200">
+                  100% PREPAID DISPATCH
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground mb-4">All transactions are encrypted and 100% secure. (No COD policy).</p>
               
               <div className="border border-neutral-300 divide-y bg-white">
                 {/* Razorpay Online */}
@@ -476,29 +472,14 @@ export default function CheckoutPage() {
                     </div>
                   )}
                 </div>
+              </div>
 
-                {/* Cash on Delivery */}
-                <div className={`p-4 transition-colors ${paymentMethod === 'cod' ? 'bg-neutral-50' : ''}`}>
-                  <label className="flex items-center gap-3 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="payment"
-                      checked={paymentMethod === 'cod'}
-                      onChange={() => setPaymentMethod('cod')}
-                      className="accent-black h-4 w-4"
-                    />
-                    <div className="flex items-center justify-between w-full">
-                      <span className="font-bold text-sm flex items-center gap-2">
-                        <Banknote className="h-4 w-4 text-emerald-600" /> Cash on Delivery (COD)
-                      </span>
-                    </div>
-                  </label>
-                  {paymentMethod === 'cod' && (
-                    <div className="mt-3 pl-7 text-xs text-muted-foreground">
-                      Pay cash to the courier delivery agent when your order arrives.
-                    </div>
-                  )}
-                </div>
+              {/* Prepaid Trust Note */}
+              <div className="mt-3 bg-neutral-50 border border-neutral-200 p-3 flex items-center gap-2.5 text-xs text-neutral-600">
+                <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0" />
+                <span>
+                  <strong>100% Buyer Protection:</strong> Pre-paid orders receive same-day priority dispatch with live SMS tracking and a hassle-free 7-day return guarantee.
+                </span>
               </div>
             </div>
 
